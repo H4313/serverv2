@@ -1,5 +1,7 @@
 package com.h4313.deephouse.model;
 
+import java.io.Serializable;
+
 import com.h4313.deephouse.exceptions.DeepHouseException;
 import com.h4313.deephouse.frame.Frame;
 import com.h4313.deephouse.sensor.SensorType;
@@ -9,19 +11,24 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 
 @Entity
-@Table(name="booleansensor")
-public class BooleanSensor1 extends Sensor {
+public class BooleanSensor1 extends Sensor implements Serializable {
 
+	public BooleanSensor1(){
+		
+	}
+	
 	public BooleanSensor1(String id, SensorType type) {
 		this.id = id;
 		this.type = type;
 	}
 	
 	protected boolean lastValue;
-
+	
+	@Transient
 	public String getDatas() {
 		String datas = "";
 		if(lastValue) {
@@ -40,7 +47,7 @@ public class BooleanSensor1 extends Sensor {
 		// TODO Auto-generated method stub
 		
 	}
-	@Id
+	
 	@Column(name="lastValue", nullable=false)
 	public boolean isLastValue() {
 		return lastValue;

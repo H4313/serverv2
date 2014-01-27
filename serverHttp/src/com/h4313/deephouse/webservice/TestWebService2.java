@@ -3,6 +3,7 @@ package com.h4313.deephouse.webservice;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -48,14 +49,16 @@ public class TestWebService2 extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		  logger.info("toto");   
 	      PrintWriter pw = response.getWriter() ;
-	      Sensor s =new BooleanSensor1("01",SensorType.SWITCH);
+	      BooleanSensor1 s =new BooleanSensor1("01",SensorType.SWITCH);
+	      s.setLastValue(true);
 	      Session session = HibernateUtil.getSession();
 	      
 	      Transaction transaction = null;
 			try {
 				transaction = session.beginTransaction();
-				session.save(s);
-
+				//session.save(s);
+				List<BooleanSensor1>  b =session.createQuery("FROM BooleanSensor1").list();
+				logger.info("la taille de la liste : "+b.size()+ " et l'id "+b.get(0).getType());
 				transaction.commit();
 			} catch (HibernateException e) {
 				transaction.rollback();

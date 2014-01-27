@@ -1,10 +1,12 @@
 package com.h4313.deephouse.main;
 
+import java.util.logging.Logger;
+
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.annotation.WebListener;
 
-import org.jboss.logging.Logger;
+
 
 @WebListener
 public class TestControleur implements ServletContextListener {
