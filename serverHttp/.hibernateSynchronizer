@@ -1,0 +1,5 @@
+package=Modele
+databaseUrl=jdbc:mysql://localhost/bd_deephouse
+driver=com.mysql.jdbc.Driver
+username=root
+ConfigurationFile=\serverHttp\src\hibernate.cfg.xml
