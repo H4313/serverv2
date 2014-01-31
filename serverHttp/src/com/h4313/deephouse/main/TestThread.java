@@ -1,6 +1,8 @@
 package com.h4313.deephouse.main;
 
-import org.jboss.logging.Logger;
+import java.util.logging.Logger;
+
+
 
 public class TestThread extends Thread{
 	

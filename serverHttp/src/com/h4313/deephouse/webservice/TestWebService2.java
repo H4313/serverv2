@@ -4,6 +4,7 @@ package com.h4313.deephouse.webservice;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -15,11 +16,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.jboss.logging.Logger;
 
-import com.h4313.deephouse.model.*;
-import com.h4313.deephouse.sensor.SensorType;
+import com.h4313.deephouse.sensor.*;
 import com.h4313.deephouse.util.HibernateUtil;
+
 
 /**
  * Servlet implementation class Main
@@ -49,16 +49,19 @@ public class TestWebService2 extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		  logger.info("toto");   
 	      PrintWriter pw = response.getWriter() ;
-	      BooleanSensor1 s =new BooleanSensor1("01",SensorType.SWITCH);
-	      s.setLastValue(true);
+	      BooleanSensor s =new BooleanSensor("01",SensorType.SWITCH);
+	     s.setLastValue(false);
+	      s.setId("022");
+	      Boolean bool=s.getLastValue();
+	      pw.write(bool+"\n");
 	      Session session = HibernateUtil.getSession();
 	      
 	      Transaction transaction = null;
 			try {
 				transaction = session.beginTransaction();
-				//session.save(s);
-				List<BooleanSensor1>  b =session.createQuery("FROM BooleanSensor1").list();
-				logger.info("la taille de la liste : "+b.size()+ " et l'id "+b.get(0).getType());
+				session.save(s);
+				List<BooleanSensor>  b =session.createQuery("FROM BooleanSensor").list();
+				logger.info("la taille de la liste : "+b.size());
 				transaction.commit();
 			} catch (HibernateException e) {
 				transaction.rollback();
@@ -66,9 +69,7 @@ public class TestWebService2 extends HttpServlet {
 			} finally {
 				session.close();
 			}
-	    //  session.save(s);
-	  //    tx.commit();
-	   //   HibernateSessionFactory.closeSession();
+
 	      pw.write("Hello world !\n");
 	      pw.write(s.getId());
 
