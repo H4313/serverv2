@@ -48,7 +48,7 @@ public class TestWebService2 extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		  logger.info("toto");   
-	      PrintWriter pw = response.getWriter() ;
+	   /*   PrintWriter pw = response.getWriter() ;
 	      BooleanSensor s =new BooleanSensor("01",SensorType.SWITCH);
 	     s.setLastValue(false);
 	      s.setId("022");
@@ -71,7 +71,7 @@ public class TestWebService2 extends HttpServlet {
 			}
 
 	      pw.write("Hello world !\n");
-	      pw.write(s.getId());
+	      pw.write(s.getId());*/
 
 	
 	     
