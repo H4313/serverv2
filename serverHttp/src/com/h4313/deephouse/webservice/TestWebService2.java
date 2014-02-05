@@ -56,9 +56,31 @@ public class TestWebService2 extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		  logger.info("toto");   
 	      PrintWriter pw = response.getWriter() ;
-	      
+
+	      BooleanSensor s =new BooleanSensor("01",SensorType.PRESENCE, null, null);
+	     s.setLastValue(true);
+	      s.setId("0223");
+	      Boolean bool=s.getLastValue();
+	      pw.write(bool+"\n");
+	      Session session = HibernateUtil.getSession();
+
 	      DAO<Room> roomDao = new RoomDAO();
 	      List<Room> rooms= roomDao.findAll();
+
+	      Transaction transaction = null;
+			try {
+				transaction = session.beginTransaction();
+				session.save(s);
+				//List<BooleanSensor>  b =session.createQuery("FROM BooleanSensor").list();
+				//logger.info("la taille de la liste : "+b.size());
+				transaction.commit();
+			} catch (HibernateException e) {
+				transaction.rollback();
+				e.printStackTrace();
+			} finally {
+				session.close();
+			}
+
 
 	      pw.write("Hello world !\n");
 	
