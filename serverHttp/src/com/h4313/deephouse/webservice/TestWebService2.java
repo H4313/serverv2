@@ -17,6 +17,13 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import com.h4313.deephouse.dao.DAO;
+import com.h4313.deephouse.dao.RoomDAO;
+import com.h4313.deephouse.exceptions.DeepHouseException;
+import com.h4313.deephouse.housemodel.House;
+import com.h4313.deephouse.housemodel.Room;
+import com.h4313.deephouse.housemodel.RoomConstants;
+import com.h4313.deephouse.housemodel.RoomFactory;
 import com.h4313.deephouse.sensor.*;
 import com.h4313.deephouse.util.HibernateUtil;
 
@@ -49,29 +56,12 @@ public class TestWebService2 extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		  logger.info("toto");   
 	      PrintWriter pw = response.getWriter() ;
-	      BooleanSensor s =new BooleanSensor("01",SensorType.SWITCH);
-	     s.setLastValue(false);
-	      s.setId("022");
-	      Boolean bool=s.getLastValue();
-	      pw.write(bool+"\n");
-	      Session session = HibernateUtil.getSession();
 	      
-	      Transaction transaction = null;
-			try {
-				transaction = session.beginTransaction();
-				session.save(s);
-				List<BooleanSensor>  b =session.createQuery("FROM BooleanSensor").list();
-				logger.info("la taille de la liste : "+b.size());
-				transaction.commit();
-			} catch (HibernateException e) {
-				transaction.rollback();
-				e.printStackTrace();
-			} finally {
-				session.close();
-			}
+	      DAO<Room> roomDao = new RoomDAO();
+	      List<Room> rooms= roomDao.findAll();
 
 	      pw.write("Hello world !\n");
-	      pw.write(s.getId());
+	
 
 	
 	     
