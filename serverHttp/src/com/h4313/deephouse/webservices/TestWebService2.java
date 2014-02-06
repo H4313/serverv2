@@ -1,4 +1,4 @@
-package com.h4313.deephouse.webservice;
+package com.h4313.deephouse.webservices;
 
 
 import java.io.IOException;
@@ -20,6 +20,8 @@ import org.hibernate.Transaction;
 import com.h4313.deephouse.dao.DAO;
 import com.h4313.deephouse.dao.RoomDAO;
 import com.h4313.deephouse.exceptions.DeepHouseException;
+import com.h4313.deephouse.exceptions.DeepHouseFormatException;
+import com.h4313.deephouse.exceptions.DeepHouseTypeException;
 import com.h4313.deephouse.housemodel.House;
 import com.h4313.deephouse.housemodel.Room;
 import com.h4313.deephouse.housemodel.RoomConstants;
@@ -57,31 +59,42 @@ public class TestWebService2 extends HttpServlet {
 		  logger.info("toto");   
 	      PrintWriter pw = response.getWriter() ;
 
-	      BooleanSensor s =new BooleanSensor("01",SensorType.PRESENCE, null, null);
-	     s.setLastValue(true);
-	      s.setId("0223");
-	      Boolean bool=s.getLastValue();
-	      pw.write(bool+"\n");
-	      Session session = HibernateUtil.getSession();
+	     
+	      
 
 	      DAO<Room> roomDao = new RoomDAO();
-	      List<Room> rooms= roomDao.findAll();
+	     Room r1= RoomFactory.createInstance(RoomConstants.ID_BEDROOM);
+	     Room r2= RoomFactory.createInstance(RoomConstants.ID_BATHROOM);
+	     Room r3= RoomFactory.createInstance(RoomConstants.ID_LIVING_ROOM);
+	     
 
-	      Transaction transaction = null;
-			try {
-				transaction = session.beginTransaction();
-				session.save(s);
-				//List<BooleanSensor>  b =session.createQuery("FROM BooleanSensor").list();
-				//logger.info("la taille de la liste : "+b.size());
-				transaction.commit();
-			} catch (HibernateException e) {
-				transaction.rollback();
-				e.printStackTrace();
-			} finally {
-				session.close();
-			}
+	    
+	     try {
+			r3.addSensor("00", SensorType.LIGHT);
+		} catch (DeepHouseException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
+	     roomDao.delete(r3);
+	      Room listRoom = null;
+		try {
+			listRoom = roomDao.find("toto");
+		} catch (DeepHouseTypeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(listRoom !=null){
+			pw.write("nb : "+listRoom.getIdRoom()+"  \n");
+		}
 
+	     
+	     
+	     
+	    
+	    // roomDao.delete(r1);
+	     
+	    
 	      pw.write("Hello world !\n");
 	
 

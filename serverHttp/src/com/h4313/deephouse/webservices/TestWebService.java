@@ -1,4 +1,4 @@
-package com.h4313.deephouse.webservice;
+package com.h4313.deephouse.webservices;
 
 
 import java.io.IOException;

@@ -142,5 +142,6 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="/utils/lib/servlet-api.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.jboss.ide.eclipse.as.core.server.runtime.runtimeTarget/JBoss 7.0 Runtime"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
