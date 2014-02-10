@@ -2,7 +2,10 @@ package com.h4313.deephouse.webservices;
 
 import java.util.Set;
 import java.util.HashSet;
+
+import javax.ws.rs.Path;
 import javax.ws.rs.core.Application;
+
 
 public class ApplicationRestDeepHouse extends Application {
 

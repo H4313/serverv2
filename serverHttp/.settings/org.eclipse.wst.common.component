@@ -7,6 +7,9 @@
         <dependent-module archiveName="utils.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/utils/utils">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="java-json.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/utils/lib/java-json.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="context-root" value="serverHttp"/>
         <property name="java-output-path" value="/serverHttp/build/classes"/>
     </wb-module>
