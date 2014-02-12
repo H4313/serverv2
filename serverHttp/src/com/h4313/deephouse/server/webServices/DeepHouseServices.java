@@ -3,6 +3,7 @@ package com.h4313.deephouse.server.webServices;
 import org.json.JSONObject;
 
 import com.h4313.deephouse.exceptions.DeepHouseException;
+import com.h4313.deephouse.housemodel.House;
 
 public interface DeepHouseServices {
 	
@@ -10,5 +11,7 @@ public interface DeepHouseServices {
 	
 	public void addActuator(JSONObject json) throws DeepHouseException;
 	
-	public void getHouse() throws DeepHouseException;
+	public House getHouse();
+	
+	public void userAction(JSONObject json) throws DeepHouseException;
 }

@@ -20,7 +20,7 @@
   </servlet-mapping>
   <context-param>
     <param-name>javax.ws.rs.Application</param-name>
-    <param-value>com.h4313.deephouse.serverHttp.webServices.ApplicationRestDeepHouse</param-value>
+    <param-value>com.h4313.deephouse.server.webServices.ApplicationRestDeepHouse</param-value>
   </context-param>
   <listener>
     <listener-class>org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap</listener-class>
