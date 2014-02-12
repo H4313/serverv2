@@ -11,7 +11,7 @@ public class ApplicationRestDeepHouse extends Application {
 	private Set<Object> singletons = new HashSet<Object>();
 	private Set<Class<?>> empty = new HashSet<Class<?>>();
 	public ApplicationRestDeepHouse(){
-	     singletons.add(new TestRestService());
+	     singletons.add(new DeepHouseServicesImpl());
 	}
 	@Override
 	public Set<Class<?>> getClasses() {
