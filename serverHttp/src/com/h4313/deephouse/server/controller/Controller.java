@@ -94,8 +94,8 @@ public class Controller extends Thread {
 	        Set<Map.Entry<String, Actuator<Object>>> set = actuators.entrySet();
 	        for(Map.Entry<String,Actuator<Object>> entry : set) {
 	        	if(entry.getValue().getModified()) {
-	        		System.out.println("Envoye : " + entry.getValue().getFrame());
-	        		actuatorsSender.submitMessage(entry.getValue().getFrame());
+	        		System.out.println("Envoye : " + entry.getValue().composeFrame());
+	        		actuatorsSender.submitMessage(entry.getValue().composeFrame());
 	        		entry.getValue().setModified(false);
 	        	}
 	        }
