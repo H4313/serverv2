@@ -53,8 +53,8 @@ public class Main {
 		}
 
 		// Persistance de la maison test : TODO A RETIRER POUR LA PRODUCTION
-		HouseDAO houseDao = new HouseDAO();
-		houseDao.createUpdate(House.getInstance());
+//		HouseDAO houseDao = new HouseDAO();
+//		houseDao.createUpdate(House.getInstance());
 
 		// http://www.mkyong.com/java/how-do-convert-java-object-to-from-json-format-gson-api/
 //		try {

@@ -40,7 +40,7 @@ public abstract class TemperatureAI {
 			integralFactor.add(1.0);
 			proportionalFactor.add(1.0);
 			integral.add(0.0);
-			nets.add(new NeuralNetwork("temperatures.xml",0.05));
+			nets.add(new NeuralNetwork("fileconfig/temperatures.xml",0.05));
 		}
 	}
 	
