@@ -1,9 +1,8 @@
-package com.h4313.deephouse.webservices;
+package com.h4313.deephouse.serverHttp.webServices;
 
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Set;
 
-import javax.ws.rs.Path;
 import javax.ws.rs.core.Application;
 
 

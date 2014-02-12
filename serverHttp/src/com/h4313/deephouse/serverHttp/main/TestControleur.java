@@ -1,9 +1,9 @@
-package com.h4313.deephouse.main;
+package com.h4313.deephouse.serverHttp.main;
 
 import java.util.logging.Logger;
 
-import javax.servlet.ServletContextListener;
 import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
 
@@ -17,25 +17,12 @@ public class TestControleur implements ServletContextListener {
 	/** Cette méthode appelée lors du démarrage de l'application*/ 
 	@SuppressWarnings("static-access")
 	public void contextInitialized(ServletContextEvent sce) {
-	
-//		logger.info("L'application vient de démarrer");
-//		TestThread monThread = new TestThread();
-//		monThread.start();
-//		  while( monThread.isAlive() ) {
-//		      // faire un traitement...
-//		      System.out.println("Ligne affichée par le main");
-//		      try {
-//		        // et faire une pause
-//		    	  monThread.sleep(800);
-//		      }
-//		      catch (InterruptedException ex) {}
-//		 }
+		logger.info("Context Initialized");
 	}
 
 
 	/** Cette méthode appelée lors de l'arret de l'application*/ 
 	public void contextDestroyed(ServletContextEvent sce) {
-	
-		System.out.println("L'application vient de s'arreter");
+		logger.info("L'application vient de s'arreter");
 	}
 }
