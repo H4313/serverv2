@@ -1,4 +1,4 @@
-package com.h4313.deephouse.serverHttp.webServices;
+package com.h4313.deephouse.server.webServices;
 
 import java.util.HashSet;
 import java.util.Set;

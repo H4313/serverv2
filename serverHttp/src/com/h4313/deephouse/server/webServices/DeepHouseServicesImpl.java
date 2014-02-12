@@ -1,4 +1,4 @@
-package com.h4313.deephouse.serverHttp.webServices;
+package com.h4313.deephouse.server.webServices;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

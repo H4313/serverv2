@@ -1,4 +1,4 @@
-package com.h4313.deephouse.serverHttp.main;
+package com.h4313.deephouse.server.main;
 
 import java.util.logging.Logger;
 
@@ -14,14 +14,14 @@ public class TestControleur implements ServletContextListener {
 	private static Logger logger = Logger.getLogger("TestControleur");  
 	
 	
-	/** Cette méthode appelée lors du démarrage de l'application*/ 
+	/** Cette m?thode appel?e lors du d?marrage de l'application*/ 
 	@SuppressWarnings("static-access")
 	public void contextInitialized(ServletContextEvent sce) {
 		logger.info("Context Initialized");
 	}
 
 
-	/** Cette méthode appelée lors de l'arret de l'application*/ 
+	/** Cette m?thode appel?e lors de l'arret de l'application*/ 
 	public void contextDestroyed(ServletContextEvent sce) {
 		logger.info("L'application vient de s'arreter");
 	}
