@@ -1,15 +1,11 @@
 package com.h4313.deephouse.server.main;
 
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
 
 import com.h4313.deephouse.actuator.ActuatorType;
-import com.h4313.deephouse.dao.HouseDAO;
 import com.h4313.deephouse.housemodel.House;
 import com.h4313.deephouse.housemodel.Room;
-import com.h4313.deephouse.sensor.Sensor;
 import com.h4313.deephouse.sensor.SensorType;
 import com.h4313.deephouse.server.controller.Controller;
 import com.h4313.deephouse.util.DecToHexConverter;
@@ -55,22 +51,6 @@ public class Main {
 		// Persistance de la maison test : TODO A RETIRER POUR LA PRODUCTION
 //		HouseDAO houseDao = new HouseDAO();
 //		houseDao.createUpdate(House.getInstance());
-
-		// http://www.mkyong.com/java/how-do-convert-java-object-to-from-json-format-gson-api/
-//		try {
-//			Gson gson = new Gson();
-//			//write converted json data to a file named "file.json"
-//			FileWriter writer = new FileWriter("/Users/macbric/Desktop/house.json");
-//			String json = gson.toJson(House.getInstance());
-//			writer.write(json);
-//			System.out.println(json);
-//			writer.close();
-//	 
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-		
-//		System.exit(0);
 		
 		// Initialisation du reseau
 		Controller.getInstance().initSensorsListener(Integer.valueOf(args[0]).intValue());
