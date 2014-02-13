@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.h4313.deephouse.actuator.ActuatorType;
+import com.h4313.deephouse.dao.HouseDAO;
 import com.h4313.deephouse.housemodel.House;
 import com.h4313.deephouse.housemodel.Room;
 import com.h4313.deephouse.sensor.SensorType;
@@ -49,8 +50,8 @@ public class Main {
 		}
 
 		// Persistance de la maison test : TODO A RETIRER POUR LA PRODUCTION
-//		HouseDAO houseDao = new HouseDAO();
-//		houseDao.createUpdate(House.getInstance());
+		HouseDAO houseDao = new HouseDAO();
+		houseDao.createUpdate(House.getInstance());
 		
 		// Initialisation du reseau
 		Controller.getInstance().initSensorsListener(Integer.valueOf(args[0]).intValue());
