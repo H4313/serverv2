@@ -16,7 +16,7 @@ public class Main {
 	public static void main(String[] args) throws Exception
 	{
 		// Initialisation horloge
-		DeepHouseCalendar.getInstance().init();
+//		DeepHouseCalendar.getInstance().init(); // OUT : Deplace
 		
 		// Initialisation de la maison // TODO : RETIRER POUR LA PRODUCTION
 		try
@@ -57,7 +57,9 @@ public class Main {
 		Controller.getInstance().initSensorsListener(Integer.valueOf(args[0]).intValue());
 		Controller.getInstance().initActuatorsSender(args[1], Integer.valueOf(args[2]).intValue());
 		Controller.getInstance().start();
-		
+
+		// Initialisation de l'horloge de simulation
+		DeepHouseCalendar.getInstance().init();
 		
 		// En attente de l'arret de la machine
 		String str = "";
