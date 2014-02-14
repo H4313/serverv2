@@ -111,7 +111,6 @@ public class DeepHouseServicesImpl implements DeepHouseServices {
 			@FormParam("type") String type) {
 
 		try {
-
 			House.getInstance().addSensor(Integer.valueOf(piece), idCapteur,
 					type);
 			return getSuccessJSONString();
