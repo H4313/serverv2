@@ -8,6 +8,7 @@ import com.h4313.deephouse.housemodel.House;
 import com.h4313.deephouse.housemodel.Room;
 import com.h4313.deephouse.sensor.Sensor;
 import com.h4313.deephouse.sensor.SensorType;
+import com.h4313.deephouse.server.util.Constant;
 import com.h4313.deephouse.util.DeepHouseCalendar;
 
 public abstract class WindowsAI {
@@ -26,7 +27,7 @@ public abstract class WindowsAI {
 		long initTime = DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000;
 		for(int i = 0 ; i < nRooms ; i++) {
 			openingTime.add(initTime);
-			openedDuration.add((long) 1800);
+			openedDuration.add(Constant.OPENED_DURATION_INIT);
 			closedTime.add(initTime);
 		}
 	}
