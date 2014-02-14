@@ -36,9 +36,9 @@ public abstract class TemperatureAI {
 		int nRooms = House.getInstance().getRooms().size();
 		long initTime = DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000;
 		for(int i = 0 ; i < nRooms ; i++) {
-			previousTime.add(initTime);
-			integralFactor.add(1.0);
-			proportionalFactor.add(1.0);
+			previousTime.add((long)0);
+			integralFactor.add(0.5);
+			proportionalFactor.add(0.5);
 			integral.add(0.0);
 			nets.add(new NeuralNetwork("fileconfig/temperatures.xml",0.05));
 		}
@@ -83,11 +83,19 @@ public abstract class TemperatureAI {
 		Sensor<Object> temp = r.getSensorByType(SensorType.TEMPERATURE).get(0);		
 		
 		Double error = (Double) heater.getDesiredValue() - (Double) temp.getLastValue();
+		if(previousTime.get(n) == 0) {
+			previousTime.set(n,DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000);
+		}
 		Long deltaT = DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000 - previousTime.get(n);
-		
-		integral.set(n, integral.get(n) + error*deltaT.doubleValue());
-		Double output = proportionalFactor.get(n)*error + integralFactor.get(n)*integral.get(n);
+		previousTime.set(n,DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000);
+		integral.set(n, (integral.get(n) + error*deltaT.doubleValue()));
+		Double output = (Double) temp.getLastValue() + proportionalFactor.get(n)*error + integralFactor.get(n)*integral.get(n);
 		heater.setLastValue(output);
 		heater.setModified(true);
+		
+		System.out.println("TEST : error = "+error);
+		System.out.println("TEST : integral = "+integral.get(n));
+		System.out.println("TEST : set = "+output);
+		System.out.println();
 	}
 }
