@@ -9,7 +9,9 @@ import com.h4313.deephouse.exceptions.DeepHouseException;
 import com.h4313.deephouse.frame.Frame;
 import com.h4313.deephouse.housemodel.House;
 import com.h4313.deephouse.housemodel.Room;
+import com.h4313.deephouse.server.ai.LightAI;
 import com.h4313.deephouse.server.ai.TemperatureAI;
+import com.h4313.deephouse.server.ai.WindowsAI;
 
 public class Controller extends Thread {
 	
@@ -37,6 +39,8 @@ public class Controller extends Thread {
               }
             }
             TemperatureAI.initTemperatureAI();
+            WindowsAI.initWindowsAI();
+            LightAI.initLightAI();
          }
          return Controller.instance;
 	}
@@ -104,19 +108,9 @@ public class Controller extends Thread {
 	 * Calls every AI to update the model
 	 */
 	private void updateModel() {
-		/*
-		for(Room r : House.getInstance().getRooms()) {
-			ArrayList<Sensor<Object>> light = r.getSensorByType(SensorType.LIGHT);
-			ArrayList<Actuator<Object>> lightcontrol = r.getActuatorByType(ActuatorType.LIGHTCONTROL);
-			if(light.size() != 0 && r.getIdRoom() == RoomConstants.ID_BEDROOM && lightcontrol.size() !=0) {
-				if(((Boolean)light.get(0).getLastValue()).booleanValue()) {
-					lightcontrol.get(0).setLastValue(false);
-					lightcontrol.get(0).setModified(true);
-				}
-			}
-		}
-		*/
 		TemperatureAI.run();
+		WindowsAI.run();
+		LightAI.run();
 	}
 	
     public void stopController() {
