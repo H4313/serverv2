@@ -1,4 +1,4 @@
-package com.h4313.deephouse.server.main;
+package com.h4313.deephouse.server.webServices;
 
 import java.util.logging.Logger;
 
@@ -9,7 +9,7 @@ import javax.servlet.annotation.WebListener;
 
 
 @WebListener
-public class TestControleur implements ServletContextListener {
+public class DeepHouseServletContext implements ServletContextListener {
 
 	private static Logger logger = Logger.getLogger("TestControleur");  
 	
