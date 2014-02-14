@@ -14,13 +14,20 @@ import javax.ws.rs.core.MediaType;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.h4313.deephouse.actuator.Actuator;
 import com.h4313.deephouse.actuator.ActuatorType;
+import com.h4313.deephouse.adapter.ActuatorAdapter;
+import com.h4313.deephouse.adapter.RoomAdapter;
+import com.h4313.deephouse.adapter.SensorAdapter;
 import com.h4313.deephouse.dao.HouseDAO;
 import com.h4313.deephouse.exceptions.DeepHouseException;
 import com.h4313.deephouse.exceptions.DeepHouseFormatException;
 import com.h4313.deephouse.exceptions.DeepHouseTypeException;
 import com.h4313.deephouse.housemodel.House;
 import com.h4313.deephouse.housemodel.Room;
+import com.h4313.deephouse.sensor.Sensor;
 import com.h4313.deephouse.sensor.SensorType;
 import com.h4313.deephouse.util.DecToHexConverter;
 import com.h4313.deephouse.util.DeepHouseCalendar;
@@ -60,14 +67,15 @@ public class DeepHouseServicesImpl implements DeepHouseServices {
 				room.addSensor(DecToHexConverter.decToHex(id++), SensorType.TEMPERATURE);
 				room.addSensor(DecToHexConverter.decToHex(id++), SensorType.WINDOW);
 				room.addSensor(DecToHexConverter.decToHex(id++), SensorType.LIGHT);
+				room.addSensor(DecToHexConverter.decToHex(id++), SensorType.DOOR);
+				room.addSensor(DecToHexConverter.decToHex(id++), SensorType.FLAP);
 				room.addSensor(DecToHexConverter.decToHex(id++), SensorType.PRESENCE);
 
-				room.addActuator(DecToHexConverter.decToHex(id++), ActuatorType.LIGHTCONTROL);
-				//room.addActuator(DecToHexConverter.decToHex(id++), ActuatorType.AIRCONDITION);
 				room.addActuator(DecToHexConverter.decToHex(id++), ActuatorType.RADIATOR);
 				room.addActuator(DecToHexConverter.decToHex(id++), ActuatorType.WINDOWCLOSER);
-				
-				// room.connectSensorActuator(sensorId, actuatorId);
+				room.addActuator(DecToHexConverter.decToHex(id++), ActuatorType.LIGHTCONTROL);
+				room.addActuator(DecToHexConverter.decToHex(id++), ActuatorType.DOORCONTROL);
+				room.addActuator(DecToHexConverter.decToHex(id++), ActuatorType.FLAPCLOSER);
 				
 				room.establishConnections();
 			}
@@ -134,8 +142,18 @@ public class DeepHouseServicesImpl implements DeepHouseServices {
 	@GET
 	@Path("/houseModel")
 	@Override
-	public House getHouse() {
-		return House.getInstance();
+	public String getHouse() {
+		
+		final GsonBuilder builder = new GsonBuilder();
+		builder.registerTypeAdapter(Room.class, new RoomAdapter());
+		builder.registerTypeAdapter(Sensor.class, new SensorAdapter());
+		builder.registerTypeAdapter(Actuator.class, new ActuatorAdapter());
+//	    builder.excludeFieldsWithoutExposeAnnotation();
+	    final Gson gson = builder.create();
+	 
+		String json = gson.toJson(House.getInstance());
+		
+		return json;
 	}
 
 	@Override

@@ -13,7 +13,7 @@ public interface DeepHouseServices {
 	
 	public String addActuator(String piece,  String idActionneur, String type) throws DeepHouseException;
 	
-	public House getHouse();
+	public String getHouse();
 	
 	public String userAction(String piece, String typeAction, String valeur, String idActionneur) throws DeepHouseException;
 }
