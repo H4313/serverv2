@@ -9,7 +9,6 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.core.MediaType;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,8 +22,6 @@ import com.h4313.deephouse.adapter.RoomAdapter;
 import com.h4313.deephouse.adapter.SensorAdapter;
 import com.h4313.deephouse.dao.HouseDAO;
 import com.h4313.deephouse.exceptions.DeepHouseException;
-import com.h4313.deephouse.exceptions.DeepHouseFormatException;
-import com.h4313.deephouse.exceptions.DeepHouseTypeException;
 import com.h4313.deephouse.housemodel.House;
 import com.h4313.deephouse.housemodel.Room;
 import com.h4313.deephouse.sensor.Sensor;
@@ -37,23 +34,31 @@ import com.h4313.deephouse.util.DeepHouseCalendar;
 @Produces("application/json")
 /*
  * !Important! Defines getters and setters domain class NO methods with no
- * params starting by get... (WebSevice thinks is a getter)
- * Documentation : RESTFul Web Services http://docs.oracle.com/javaee/6/tutorial/doc/gilik.html
+ * params starting by get... (WebSevice thinks is a getter) Documentation :
+ * RESTFul Web Services http://docs.oracle.com/javaee/6/tutorial/doc/gilik.html
  */
 public class DeepHouseServicesImpl implements DeepHouseServices {
 
 	private HouseDAO houseDAO;
-	
-	public DeepHouseServicesImpl() throws DeepHouseException{
+
+	public DeepHouseServicesImpl() throws DeepHouseException {
 		houseDAO = new HouseDAO();
 		House.initInstance(houseDAO);
-		House.getInstance().printInformations();
+
+		House h = House.getInstance();
+		h.printInformations();
+
+		// h.addActuator(0, "Haha1", ActuatorType.DOORCONTROL.name());
+		// h.printInformations();
+
+		// houseDAO.createUpdate(h);
+
 	}
-	
+
 	@GET
 	@Path("/connect")
 	@Override
-	public String connect() throws DeepHouseException {
+	public String connect() {
 		// Initialisation horloge
 		DeepHouseCalendar.getInstance().init();
 		
@@ -89,54 +94,48 @@ public class DeepHouseServicesImpl implements DeepHouseServices {
 			e.printStackTrace();
 		}
 		
-		String response = null;
 		try {
-			response = new JSONObject().put("success", true).toString();
-		} catch (JSONException e) {
-			throw new DeepHouseFormatException("Json response error : " + e.getMessage());
+			return getSuccessJSONString();
+		} catch (Exception e) {
+			return getErrorJSONString(e);
 		}
-		
-		return response;
 	}
-	
+
 	@Override
 	@POST
 	@Path("/addSensor")
 	@Consumes("application/x-www-form-urlencoded")
-	public String addSensor(@FormParam("piece") String piece, 
+	/* example type = SensorType.DOOR.name(); */
+	public String addSensor(@FormParam("piece") String piece,
 			@FormParam("capteur") String idCapteur,
-			@FormParam("type") String type) throws DeepHouseException {
-		
-		House.getInstance().addSensor(Integer.valueOf(piece), idCapteur, type);
-		
-		String response = null;
+			@FormParam("type") String type) {
+
 		try {
-			response = new JSONObject().put("success", true).toString();
-		} catch (JSONException e) {
-			throw new DeepHouseFormatException("Json response error : " + e.getMessage());
+
+			House.getInstance().addSensor(Integer.valueOf(piece), idCapteur,
+					type);
+			return getSuccessJSONString();
+		} catch (Exception e) {
+			return getErrorJSONString(e);
 		}
-		
-		return response;
 	}
 
 	@Override
 	@POST
 	@Path("/addActuator")
 	@Consumes("application/x-www-form-urlencoded")
-	public String addActuator(@FormParam("piece") String piece, 
+	/* example type = ActuatorType.DOORCONTROL.name(); */
+	public String addActuator(@FormParam("piece") String piece,
 			@FormParam("actionneur") String idActionneur,
-			@FormParam("type") String type) throws DeepHouseException {
-		
-		House.getInstance().addActuator(Integer.valueOf(piece), idActionneur, type);
-		
-		String response = null;
+			@FormParam("type") String type) {
+
 		try {
-			response = new JSONObject().put("success", true).toString();
-		} catch (JSONException e) {
-			throw new DeepHouseFormatException("Json response error : " + e.getMessage());
+			House.getInstance().addActuator(Integer.valueOf(piece),
+					idActionneur, type);
+			return getSuccessJSONString();
+		} catch (Exception e) {
+			return getErrorJSONString(e);
 		}
-		
-		return response;
 	}
 
 	@GET
@@ -160,21 +159,41 @@ public class DeepHouseServicesImpl implements DeepHouseServices {
 	@PUT
 	@Path("/userAction")
 	@Consumes("application/x-www-form-urlencoded")
-	public String userAction(@FormParam("piece") String piece, 
-			@FormParam("typeAction")String typeAction, 
-			@FormParam("valeur") String valeur, 
-			@FormParam("idActionneur") String idActionneur) throws DeepHouseException {
-		
-		House.getInstance().userAction(Integer.valueOf(piece), typeAction, valeur, idActionneur);
-		
-		String response = null;
+	public String userAction(@FormParam("piece") String piece,
+			@FormParam("typeAction") String typeAction,
+			@FormParam("valeur") String valeur,
+			@FormParam("idActionneur") String idActionneur) {
+
 		try {
-			response = new JSONObject().put("success", true).toString();
-		} catch (JSONException e) {
-			throw new DeepHouseFormatException("Json response error : " + e.getMessage());
+			House.getInstance().userAction(Integer.valueOf(piece), typeAction,
+					valeur, idActionneur);
+
+			return getSuccessJSONString();
+		} catch (Exception e) {
+			return getErrorJSONString(e);
 		}
-		
-		return response;
 	}
 
+	private String getErrorJSONString(Exception e) {
+		try {
+			JSONObject json = new JSONObject();
+			json.put("success", false);
+			json.put("msg", e.getMessage());
+			return json.toString();
+		} catch (JSONException e1) {
+			System.out.println(e1.getMessage());
+			return "Json response error : " + e1.getMessage();
+		}
+	}
+
+	private String getSuccessJSONString() {
+		try {
+			JSONObject json = new JSONObject();
+			json.put("success", true);
+			return json.toString();
+		} catch (JSONException e1) {
+			System.out.println(e1.getMessage());
+			return "Json response error : " + e1.getMessage();
+		}
+	}
 }
