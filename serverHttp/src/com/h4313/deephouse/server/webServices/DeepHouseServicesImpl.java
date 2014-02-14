@@ -30,7 +30,7 @@ import com.h4313.deephouse.util.DecToHexConverter;
 import com.h4313.deephouse.util.DeepHouseCalendar;
 
 @Path("/rest")
-//@Consumes("application/json")
+// @Consumes("application/json")
 @Produces("application/json")
 /*
  * !Important! Defines getters and setters domain class NO methods with no
@@ -45,56 +45,61 @@ public class DeepHouseServicesImpl implements DeepHouseServices {
 		houseDAO = new HouseDAO();
 		House.initInstance(houseDAO);
 
-		House h = House.getInstance();
-		h.printInformations();
-
-		// h.addActuator(0, "Haha1", ActuatorType.DOORCONTROL.name());
-		// h.printInformations();
-
-		// houseDAO.createUpdate(h);
-
+		/*
+		 * House h = House.getInstance(); h.printInformations();
+		 * 
+		 * h.addActuator(0, "Haha1", ActuatorType.DOORCONTROL.name());
+		 * h.addSensor(0, "hah2", SensorType.DOOR.name());
+		 * h.printInformations();
+		 * 
+		 * houseDAO.createUpdate(h);
+		 */
 	}
 
 	@GET
 	@Path("/connect")
 	@Override
 	public String connect() {
-		// Initialisation horloge
-		DeepHouseCalendar.getInstance().init();
-		
-		// Initialisation de la maison // TODO : RETIRER POUR LA PRODUCTION
-		try
-		{
-			List<Room> rooms = House.getInstance().getRooms();
-			int id = 0;
-			for(Room room : rooms)
-			{
-				room.addSensor(DecToHexConverter.decToHex(id++), SensorType.TEMPERATURE);
-				room.addSensor(DecToHexConverter.decToHex(id++), SensorType.WINDOW);
-				room.addSensor(DecToHexConverter.decToHex(id++), SensorType.LIGHT);
-				room.addSensor(DecToHexConverter.decToHex(id++), SensorType.DOOR);
-				room.addSensor(DecToHexConverter.decToHex(id++), SensorType.FLAP);
-				room.addSensor(DecToHexConverter.decToHex(id++), SensorType.PRESENCE);
-
-				room.addActuator(DecToHexConverter.decToHex(id++), ActuatorType.RADIATOR);
-				room.addActuator(DecToHexConverter.decToHex(id++), ActuatorType.WINDOWCLOSER);
-				room.addActuator(DecToHexConverter.decToHex(id++), ActuatorType.LIGHTCONTROL);
-				room.addActuator(DecToHexConverter.decToHex(id++), ActuatorType.DOORCONTROL);
-				room.addActuator(DecToHexConverter.decToHex(id++), ActuatorType.FLAPCLOSER);
-				
-				room.establishConnections();
-			}
-			System.out.println("Done init");
-			for(Room room : rooms){
-				room.printInformations();
-			}
-		} 
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
-		
 		try {
+			// Initialisation horloge
+			DeepHouseCalendar.getInstance().init();
+
+			// Initialisation de la maison // TODO : RETIRER POUR LA PRODUCTION
+			{
+				List<Room> rooms = House.getInstance().getRooms();
+				int id = 0;
+				for (Room room : rooms) {
+					room.addSensor(DecToHexConverter.decToHex(id++),
+							SensorType.TEMPERATURE);
+					room.addSensor(DecToHexConverter.decToHex(id++),
+							SensorType.WINDOW);
+					room.addSensor(DecToHexConverter.decToHex(id++),
+							SensorType.LIGHT);
+					room.addSensor(DecToHexConverter.decToHex(id++),
+							SensorType.DOOR);
+					room.addSensor(DecToHexConverter.decToHex(id++),
+							SensorType.FLAP);
+					room.addSensor(DecToHexConverter.decToHex(id++),
+							SensorType.PRESENCE);
+
+					room.addActuator(DecToHexConverter.decToHex(id++),
+							ActuatorType.RADIATOR);
+					room.addActuator(DecToHexConverter.decToHex(id++),
+							ActuatorType.WINDOWCLOSER);
+					room.addActuator(DecToHexConverter.decToHex(id++),
+							ActuatorType.LIGHTCONTROL);
+					room.addActuator(DecToHexConverter.decToHex(id++),
+							ActuatorType.DOORCONTROL);
+					room.addActuator(DecToHexConverter.decToHex(id++),
+							ActuatorType.FLAPCLOSER);
+
+					room.establishConnections();
+				}
+				System.out.println("Done init");
+				House.getInstance().printInformations();
+			}
+			// done init
+
 			return getSuccessJSONString();
 		} catch (Exception e) {
 			return getErrorJSONString(e);
@@ -111,8 +116,9 @@ public class DeepHouseServicesImpl implements DeepHouseServices {
 			@FormParam("type") String type) {
 
 		try {
-			House.getInstance().addSensor(Integer.valueOf(piece), idCapteur,
-					type);
+			House h = House.getInstance();
+			h.addSensor(Integer.valueOf(piece), idCapteur, type);
+			houseDAO.createUpdate(h);
 			return getSuccessJSONString();
 		} catch (Exception e) {
 			return getErrorJSONString(e);
@@ -129,8 +135,9 @@ public class DeepHouseServicesImpl implements DeepHouseServices {
 			@FormParam("type") String type) {
 
 		try {
-			House.getInstance().addActuator(Integer.valueOf(piece),
-					idActionneur, type);
+			House h = House.getInstance();
+			h.addActuator(Integer.valueOf(piece), idActionneur, type);
+			houseDAO.createUpdate(h);
 			return getSuccessJSONString();
 		} catch (Exception e) {
 			return getErrorJSONString(e);
@@ -141,16 +148,16 @@ public class DeepHouseServicesImpl implements DeepHouseServices {
 	@Path("/houseModel")
 	@Override
 	public String getHouse() {
-		
+
 		final GsonBuilder builder = new GsonBuilder();
 		builder.registerTypeAdapter(Room.class, new RoomAdapter());
 		builder.registerTypeAdapter(Sensor.class, new SensorAdapter());
 		builder.registerTypeAdapter(Actuator.class, new ActuatorAdapter());
-//	    builder.excludeFieldsWithoutExposeAnnotation();
-	    final Gson gson = builder.create();
-	 
+		// builder.excludeFieldsWithoutExposeAnnotation();
+		final Gson gson = builder.create();
+
 		String json = gson.toJson(House.getInstance());
-		
+
 		return json;
 	}
 
