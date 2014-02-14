@@ -26,7 +26,7 @@ import com.h4313.deephouse.util.DecToHexConverter;
 import com.h4313.deephouse.util.DeepHouseCalendar;
 
 @Path("/rest")
-@Consumes("application/json")
+//@Consumes("application/json")
 @Produces("application/json")
 /*
  * !Important! Defines getters and setters domain class NO methods with no
