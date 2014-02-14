@@ -25,9 +25,9 @@ public abstract class WindowsAI {
 		int nRooms = House.getInstance().getRooms().size();
 		long initTime = DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000;
 		for(int i = 0 ; i < nRooms ; i++) {
-			openingTime.set(i,initTime);
-			openedDuration.set(i,(long) 1800);
-			closedTime.set(i,initTime);
+			openingTime.add(initTime);
+			openedDuration.add((long) 1800);
+			closedTime.add(initTime);
 		}
 	}
 	
