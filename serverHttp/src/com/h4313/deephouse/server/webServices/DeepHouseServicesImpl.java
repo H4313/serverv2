@@ -15,8 +15,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.h4313.deephouse.actuator.ActuatorType;
+import com.h4313.deephouse.dao.HouseDAO;
 import com.h4313.deephouse.exceptions.DeepHouseException;
 import com.h4313.deephouse.exceptions.DeepHouseFormatException;
+import com.h4313.deephouse.exceptions.DeepHouseTypeException;
 import com.h4313.deephouse.housemodel.House;
 import com.h4313.deephouse.housemodel.Room;
 import com.h4313.deephouse.sensor.SensorType;
@@ -33,6 +35,14 @@ import com.h4313.deephouse.util.DeepHouseCalendar;
  */
 public class DeepHouseServicesImpl implements DeepHouseServices {
 
+	private HouseDAO houseDAO;
+	
+	public DeepHouseServicesImpl() throws DeepHouseException{
+		houseDAO = new HouseDAO();
+		House.initInstance(houseDAO);
+		House.getInstance().printInformations();
+	}
+	
 	@GET
 	@Path("/connect")
 	@Override
@@ -125,12 +135,6 @@ public class DeepHouseServicesImpl implements DeepHouseServices {
 	@Path("/houseModel")
 	@Override
 	public House getHouse() {
-		/*
-		 * testing House h = House.getInstance(); Room r = h.getRooms().get(0);
-		 * r.addActuator("aa", ActuatorType.RADIATOR); r.addSensor("aaaaaa",
-		 * SensorType.TEMPERATURE); r.establishConnections();
-		 * r.printInformations();
-		 */
 		return House.getInstance();
 	}
 
