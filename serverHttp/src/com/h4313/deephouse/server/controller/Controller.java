@@ -9,6 +9,8 @@ import com.h4313.deephouse.exceptions.DeepHouseException;
 import com.h4313.deephouse.frame.Frame;
 import com.h4313.deephouse.housemodel.House;
 import com.h4313.deephouse.housemodel.Room;
+import com.h4313.deephouse.sensor.Sensor;
+import com.h4313.deephouse.sensor.SensorType;
 import com.h4313.deephouse.server.ai.LightAI;
 import com.h4313.deephouse.server.ai.TemperatureAI;
 import com.h4313.deephouse.server.ai.WindowsAI;
@@ -64,7 +66,7 @@ public class Controller extends Thread {
 					sendActuators();	
 				}
 				else {
-					Thread.sleep(5000);
+					Thread.sleep(2000);
 				}
 			}
 		} catch(Exception e) {
