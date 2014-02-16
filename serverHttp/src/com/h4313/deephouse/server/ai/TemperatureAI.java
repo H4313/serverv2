@@ -100,9 +100,5 @@ public abstract class TemperatureAI {
 		Double output = (Double) temp.getLastValue() + proportionalFactor.get(n)*error + integralFactor.get(n)*integral.get(n);
 		heater.setLastValue(output);
 		heater.setModified(true);
-		
-		System.out.println("TEST : measured = "+temp.getLastValue());
-		System.out.print("TEST : desired = "+heater.getDesiredValue());
-		System.out.println("TEST : output = "+output);
 	}
 }
