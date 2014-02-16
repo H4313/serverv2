@@ -59,8 +59,8 @@ public class TemperatureAIViewMultiple {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationByPlatform(true);
         frame.setResizable(false);
-        Integer sizeX = 800;
-        Integer sizeY = 400;
+        Integer sizeX = 1200;
+        Integer sizeY = 800;
         frame.setSize(sizeX,sizeY);
         TemperatureAIViewMultiple.minValueX = minValueX;
         TemperatureAIViewMultiple.maxValueX = maxValueX;
@@ -111,9 +111,56 @@ public class TemperatureAIViewMultiple {
                //g2.clearRect(0,0,frame.getWidth(),frame.getHeight());
                
 		       int zeroY = frame.getHeight()-frame.getHeight()/6;
-		       int zeroX = frame.getWidth()/12; 
+		       int zeroX = frame.getWidth()/12+50; 
 		       Double scaleX = (double)(frame.getWidth()-zeroX)/(maxValueX-minValueX);
 		       Double scaleY = (double)(zeroY)/(maxValueY-minValueY);
+		       
+		       g2.setColor(Color.black);
+		       g2.setStroke(new BasicStroke(1));
+		       Line2D xAxis = new Line2D.Double(0,zeroY,(maxValueX-minValueX)*scaleX+zeroX,zeroY);
+		       g2.draw(xAxis);
+		       Line2D yAxis = new Line2D.Double(zeroX,0,zeroX,frame.getHeight());
+		       g2.draw(yAxis);
+		       Font fontExtremeBounds = new Font(g2.getFont().getName(),Font.BOLD,g2.getFont().getSize());
+		       g2.setFont(fontExtremeBounds);
+		       DecimalFormat numberFormat = new DecimalFormat("#.00");
+		       DecimalFormatSymbols numberSeparator = new DecimalFormatSymbols();
+		       numberSeparator.setDecimalSeparator('.');
+		       numberFormat.setDecimalFormatSymbols(numberSeparator);
+		       g2.drawString(String.valueOf(minValueX.intValue()), zeroX+5, zeroY+25);
+			   g2.drawString(String.valueOf(maxValueX.intValue()), frame.getWidth()-10*(String.valueOf(maxValueX.intValue()).length()), zeroY+25);
+		       g2.drawString(numberFormat.format(maxValueY), zeroX-9*(String.valueOf(numberFormat.format(maxValueY)).length()), 10);
+		       g2.drawString(numberFormat.format(minValueY), zeroX-9*(String.valueOf(numberFormat.format(minValueY)).length()), zeroY-5);
+		       
+		       for(int i = 1 ; i < 12 ; i++) {
+		    	   g2.setColor(Color.black);
+		    	   int xGrad = (int) (minValueX+i*(maxValueX-minValueX)/12);
+		    	   g2.drawString(String.valueOf(xGrad), (int) ((xGrad-minValueX)*scaleX+zeroX), zeroY+25);
+		    	   Line2D xGradLine = new Line2D.Double(((xGrad-minValueX)*scaleX+zeroX),zeroY,((xGrad-minValueX)*scaleX+zeroX),zeroY+10);
+		    	   g2.draw(xGradLine);
+		    	   
+		    	   g2.setColor(Color.lightGray);
+		    	   Line2D xLine = new Line2D.Double(((xGrad-minValueX)*scaleX+zeroX),0,((xGrad-minValueX)*scaleX+zeroX),zeroY-1);
+		    	   g2.draw(xLine);
+		       }
+		       
+		       for(int i = 1 ; i < 10 ; i++) {
+		    	   g2.setColor(Color.black);
+		    	   int yGrad = (int) (minValueY+i*(maxValueY-minValueY)/10);
+		    	   g2.drawString(numberFormat.format(yGrad), zeroX-9*(String.valueOf(numberFormat.format(yGrad)).length()), (int) (zeroY - ((yGrad-minValueY)*scaleY)));
+		    	   Line2D yGradLine = new Line2D.Double(zeroX-10,(int) (zeroY - ((yGrad-minValueY)*scaleY)),zeroX,(int) (zeroY - ((yGrad-minValueY)*scaleY)));
+		    	   g2.draw(yGradLine);
+		    	   
+		    	   g2.setColor(Color.lightGray);
+		    	   Line2D yLine = new Line2D.Double(zeroX+1,(int) (zeroY - ((yGrad-minValueY)*scaleY)),frame.getWidth(),(int) (zeroY - ((yGrad-minValueY)*scaleY)));
+		    	   g2.draw(yLine);
+		       }
+		       
+		       
+		       for(int i = 0 ; i < rooms.size() ; i++) {
+			       g2.setColor(colors.get(i%colors.size()));
+			       g2.drawString(rooms.get(i).getClass().getSimpleName(),0, 100+15*i);   
+		       }
 		       
 		       for(int i = 0 ; i < rooms.size() ; i++) {
 			       g2.setColor(colors.get(i%colors.size()));
@@ -129,28 +176,6 @@ public class TemperatureAIViewMultiple {
 			       previousMeasured.set(i, measured.get(i));  
 		       }
 		       previousTime = time; 
-		       
-		       g2.setColor(Color.black);
-		       g2.setStroke(new BasicStroke(1));
-		       Line2D xAxis = new Line2D.Double(0,zeroY,(maxValueX-minValueX)*scaleX+zeroX,zeroY);
-		       g2.draw(xAxis);
-		       Line2D yAxis = new Line2D.Double(zeroX,0,zeroX,frame.getHeight());
-		       g2.draw(yAxis);
-		       Font fontExtremeBounds = new Font(g2.getFont().getName(),Font.BOLD,g2.getFont().getSize());
-		       g2.setFont(fontExtremeBounds);
-		       DecimalFormat numberFormat = new DecimalFormat("#.00");
-		       DecimalFormatSymbols numberSeparator = new DecimalFormatSymbols();
-		       numberSeparator.setDecimalSeparator('.');
-		       numberFormat.setDecimalFormatSymbols(numberSeparator);
-		       g2.drawString(numberFormat.format(minValueX), zeroX+5, zeroY+15);
-			   g2.drawString(numberFormat.format(maxValueX), frame.getWidth()-8*(String.valueOf(numberFormat.format(maxValueX)).length()), zeroY+15);
-		       g2.drawString(numberFormat.format(maxValueY), zeroX-8*(String.valueOf(numberFormat.format(maxValueY)).length()), 0+15);
-		       g2.drawString(numberFormat.format(minValueY), zeroX-8*(String.valueOf(numberFormat.format(minValueY)).length()), zeroY-8);
-		       
-		       for(int i = 0 ; i < rooms.size() ; i++) {
-			       g2.setColor(colors.get(i%colors.size()));
-			       g2.drawString(rooms.get(i).getClass().getSimpleName(),0, 100+15*i);   
-		       }
             }
 	    };
 	    

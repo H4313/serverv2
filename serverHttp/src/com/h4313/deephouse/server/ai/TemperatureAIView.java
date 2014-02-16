@@ -1,31 +1,18 @@
 package com.h4313.deephouse.server.ai;
 
 import java.awt.BasicStroke;
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import java.awt.geom.Line2D;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 
-import javax.swing.AbstractAction;
-import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.KeyStroke;
 
 import com.h4313.deephouse.housemodel.Room;
 
@@ -86,8 +73,8 @@ public abstract class TemperatureAIView
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationByPlatform(true);
         frame.setResizable(false);
-        Integer sizeX = 800;
-        Integer sizeY = 400;
+        Integer sizeX = 1200;
+        Integer sizeY = 800;
         frame.setSize(sizeX,sizeY);
 	    TemperatureAIView.minValueX = minValueX;
 	    TemperatureAIView.maxValueX = maxValueX;
@@ -132,43 +119,9 @@ public abstract class TemperatureAIView
                //g2.clearRect(0,0,frame.getWidth(),frame.getHeight());
                
 		       int zeroY = frame.getHeight()-frame.getHeight()/6;
-		       int zeroX = frame.getWidth()/12; 
+		       int zeroX = frame.getWidth()/12+50; 
 		       Double scaleX = (double)(frame.getWidth()-zeroX)/(maxValueX-minValueX);
 		       Double scaleY = (double)(zeroY)/(maxValueY-minValueY);
-
-		       Line2D desiredLine = new Line2D.Double((previousTime-minValueX)*scaleX+zeroX,
-			    		   							  (zeroY - ((previousDesired-minValueY)*scaleY)),
-			    		   							  (time-minValueX)*scaleX+zeroX,
-			    		   							  (zeroY - ((desired-minValueY)*scaleY)));
-		       desiredLines.add(desiredLine);
-		       
-		       Line2D measuredLine = new Line2D.Double((previousTime-minValueX)*scaleX+zeroX,
-		    		   								   (zeroY - ((previousMeasured-minValueY)*scaleY)),
-													   (time-minValueX)*scaleX+zeroX,
-													   (zeroY - ((measured-minValueY)*scaleY)));
-		       measuredLines.add(measuredLine);
-		       
-		       Line2D outputLine = new Line2D.Double((previousTime-minValueX)*scaleX+zeroX,
-		    		   								 (zeroY - ((previousOutput-minValueY)*scaleY)),
-												     (time-minValueX)*scaleX+zeroX,
-												     (zeroY - ((output-minValueY)*scaleY)));
-		       outputLines.add(outputLine);
-		       
-		       for(int i = 0 ; i < desiredLines.size() ; i++) {
-			       g2.setColor(Color.green);
-			       g2.draw(desiredLines.get(i));
-			       g2.setColor(Color.red);
-			       g2.draw(measuredLines.get(i));
-			       g2.setColor(Color.blue);
-			       g2.draw(outputLines.get(i));	
-		       }
-
-		       
-		       previousDesired = desired;
-		       previousMeasured = measured;
-		       previousOutput = output;
-		       previousTime = time;
-
 		       
 		       g2.setColor(Color.black);
 		       g2.setStroke(new BasicStroke(1));
@@ -182,10 +135,74 @@ public abstract class TemperatureAIView
 		       DecimalFormatSymbols numberSeparator = new DecimalFormatSymbols();
 		       numberSeparator.setDecimalSeparator('.');
 		       numberFormat.setDecimalFormatSymbols(numberSeparator);
-		       g2.drawString(numberFormat.format(minValueX), zeroX+5, zeroY+15);
-			   g2.drawString(numberFormat.format(maxValueX), frame.getWidth()-8*(String.valueOf(numberFormat.format(maxValueX)).length()), zeroY+15);
-		       g2.drawString(numberFormat.format(maxValueY), zeroX-8*(String.valueOf(numberFormat.format(maxValueY)).length()), 0+15);
-		       g2.drawString(numberFormat.format(minValueY), zeroX-8*(String.valueOf(numberFormat.format(minValueY)).length()), zeroY-8);
+
+		       g2.drawString(String.valueOf(minValueX.intValue()), zeroX+5, zeroY+25);
+			   g2.drawString(String.valueOf(maxValueX.intValue()), frame.getWidth()-10*(String.valueOf(maxValueX.intValue()).length()), zeroY+25);
+		       g2.drawString(numberFormat.format(maxValueY), zeroX-9*(String.valueOf(numberFormat.format(maxValueY)).length()), 10);
+		       g2.drawString(numberFormat.format(minValueY), zeroX-9*(String.valueOf(numberFormat.format(minValueY)).length()), zeroY-5);
+		       
+		       for(int i = 1 ; i < 12 ; i++) {
+		    	   g2.setColor(Color.black);
+		    	   int xGrad = (int) (minValueX+i*(maxValueX-minValueX)/12);
+		    	   g2.drawString(String.valueOf(xGrad), (int) ((xGrad-minValueX)*scaleX+zeroX), zeroY+25);
+		    	   Line2D xGradLine = new Line2D.Double(((xGrad-minValueX)*scaleX+zeroX),zeroY,((xGrad-minValueX)*scaleX+zeroX),zeroY+10);
+		    	   g2.draw(xGradLine);
+		    	   
+		    	   g2.setColor(Color.lightGray);
+		    	   Line2D xLine = new Line2D.Double(((xGrad-minValueX)*scaleX+zeroX),0,((xGrad-minValueX)*scaleX+zeroX),zeroY-1);
+		    	   g2.draw(xLine);
+		       }
+		       
+		       for(int i = 1 ; i < 10 ; i++) {
+		    	   g2.setColor(Color.black);
+		    	   int yGrad = (int) (minValueY+i*(maxValueY-minValueY)/10);
+		    	   g2.drawString(numberFormat.format(yGrad), zeroX-9*(String.valueOf(numberFormat.format(yGrad)).length()), (int) (zeroY - ((yGrad-minValueY)*scaleY)));
+		    	   Line2D yGradLine = new Line2D.Double(zeroX-10,(int) (zeroY - ((yGrad-minValueY)*scaleY)),zeroX,(int) (zeroY - ((yGrad-minValueY)*scaleY)));
+		    	   g2.draw(yGradLine);
+		    	   
+		    	   g2.setColor(Color.lightGray);
+		    	   Line2D yLine = new Line2D.Double(zeroX+1,(int) (zeroY - ((yGrad-minValueY)*scaleY)),frame.getWidth(),(int) (zeroY - ((yGrad-minValueY)*scaleY)));
+		    	   g2.draw(yLine);
+		       }
+		       
+		       g2.setColor(Color.green);
+		       g2.drawString("Desired",0, 115);
+		       g2.setColor(Color.red);
+		       g2.drawString("Measured",0, 130);
+		       g2.setColor(Color.blue);
+		       g2.drawString("Heater",0,145);
+		       
+		       Line2D desiredLine = new Line2D.Double((previousTime-minValueX)*scaleX+zeroX,
+													  (zeroY - ((previousDesired-minValueY)*scaleY)),
+													  (time-minValueX)*scaleX+zeroX,
+													  (zeroY - ((desired-minValueY)*scaleY)));
+		       desiredLines.add(desiredLine);
+			
+		       Line2D measuredLine = new Line2D.Double((previousTime-minValueX)*scaleX+zeroX,
+													   (zeroY - ((previousMeasured-minValueY)*scaleY)),
+													   (time-minValueX)*scaleX+zeroX,
+													   (zeroY - ((measured-minValueY)*scaleY)));
+		       measuredLines.add(measuredLine);
+			
+		       Line2D outputLine = new Line2D.Double((previousTime-minValueX)*scaleX+zeroX,
+													 (zeroY - ((previousOutput-minValueY)*scaleY)),
+												     (time-minValueX)*scaleX+zeroX,
+												     (zeroY - ((output-minValueY)*scaleY)));
+		       outputLines.add(outputLine);
+			
+		       for(int i = 0 ; i < desiredLines.size() ; i++) {
+					g2.setColor(Color.green);
+					g2.draw(desiredLines.get(i));
+					g2.setColor(Color.red);
+					g2.draw(measuredLines.get(i));
+					g2.setColor(Color.blue);
+					g2.draw(outputLines.get(i));	
+		       }
+			
+		       previousDesired = desired;
+		       previousMeasured = measured;
+		       previousOutput = output;
+		       previousTime = time;
             }
 	    };
 	    
