@@ -1,43 +1,23 @@
 package com.h4313.deephouse.server.ai;
 
 import java.awt.BasicStroke;
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import java.awt.geom.Line2D;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
+import java.util.List;
 
-import javax.swing.AbstractAction;
-import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.KeyStroke;
 
 import com.h4313.deephouse.housemodel.Room;
 
-
-/**
- * This class is a view of the class TemperatureAI
- * 
- * @author Julien Cumin
- *
- */
-public abstract class TemperatureAIView 
-{
+public class TemperatureAIViewMultiple {
 	/*###################################
 	 * PRIVATE ATTRIBUTES
 	 ####################################*/
@@ -56,54 +36,53 @@ public abstract class TemperatureAIView
 	
 	private static double time;
 	
-	private static double desired;
-	
-	private static double measured;
-	
-	private static double output;
+	private static ArrayList<Double> measured;
 	
 	private static double previousTime;
 	
-	private static double previousDesired;
+	private static List<Room> rooms;
 	
-	private static double previousMeasured;
+	private static ArrayList<Double> previousMeasured;
 	
-	private static double previousOutput;
+	private static List<List<Line2D>> measuredLines;
 	
-	private static ArrayList<Line2D> desiredLines;
-	
-	private static ArrayList<Line2D> measuredLines;
-	
-	private static ArrayList<Line2D> outputLines;
+	private static ArrayList<Color> colors;
 	
 	/*###################################
 	 * INIT
 	 ####################################*/
 	
-	public static void initTemperatureAIView(Double minValueX, Double maxValueX, Double minValueY, Double maxValueY, Room room)
+	public static void initTemperatureAIViewMultiple(Double minValueX, Double maxValueX, Double minValueY, Double maxValueY, List<Room> rooms)
 	{
-        frame = new JFrame(room.getClass().getSimpleName()+" "+room.getIdRoom()+" Temperature (°C)");
+		TemperatureAIViewMultiple.rooms = rooms;
+        frame = new JFrame("Temperatures (°C)");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationByPlatform(true);
         frame.setResizable(false);
         Integer sizeX = 800;
         Integer sizeY = 400;
         frame.setSize(sizeX,sizeY);
-	    TemperatureAIView.minValueX = minValueX;
-	    TemperatureAIView.maxValueX = maxValueX;
-	    TemperatureAIView.minValueY = minValueY;
-	    TemperatureAIView.maxValueY = maxValueY;
-	    TemperatureAIView.desired = 0.0;
-	    TemperatureAIView.time = 0.0;
-	    TemperatureAIView.measured = 0.0;
-	    TemperatureAIView.output = 0.0;
-	    TemperatureAIView.previousDesired = 0.0;
-	    TemperatureAIView.previousTime = 0.0;
-	    TemperatureAIView.previousMeasured = 0.0;
-	    TemperatureAIView.previousOutput = 0.0;
-	    desiredLines = new ArrayList<Line2D>();
-	    measuredLines = new ArrayList<Line2D>();
-	    outputLines = new ArrayList<Line2D>();
+        TemperatureAIViewMultiple.minValueX = minValueX;
+        TemperatureAIViewMultiple.maxValueX = maxValueX;
+        TemperatureAIViewMultiple.minValueY = minValueY;
+        TemperatureAIViewMultiple.maxValueY = maxValueY;
+        TemperatureAIViewMultiple.time = 0.0;
+        TemperatureAIViewMultiple.measured = new ArrayList<Double>();
+        TemperatureAIViewMultiple.previousTime = 0.0;
+        TemperatureAIViewMultiple.previousMeasured = new ArrayList<Double>();
+	    measuredLines = new ArrayList<List<Line2D>>();
+	    colors = new ArrayList<Color>();
+	    for(int i = 0 ; i < rooms.size() ; i++) {
+	    	measuredLines.add(new ArrayList<Line2D>());
+	    	measured.add(0.0);
+	    	previousMeasured.add(0.0);
+	    }
+	    colors.add(Color.blue);
+	    colors.add(Color.green);
+	    colors.add(Color.yellow);
+	    colors.add(Color.red);
+	    colors.add(Color.magenta);
+	    colors.add(Color.cyan);
 	    setPaintAndWheel();
 	    initialized = true;
         frame.setVisible(true);
@@ -135,40 +114,21 @@ public abstract class TemperatureAIView
 		       int zeroX = frame.getWidth()/12; 
 		       Double scaleX = (double)(frame.getWidth()-zeroX)/(maxValueX-minValueX);
 		       Double scaleY = (double)(zeroY)/(maxValueY-minValueY);
-
-		       Line2D desiredLine = new Line2D.Double((previousTime-minValueX)*scaleX+zeroX,
-			    		   							  (zeroY - ((previousDesired-minValueY)*scaleY)),
-			    		   							  (time-minValueX)*scaleX+zeroX,
-			    		   							  (zeroY - ((desired-minValueY)*scaleY)));
-		       desiredLines.add(desiredLine);
 		       
-		       Line2D measuredLine = new Line2D.Double((previousTime-minValueX)*scaleX+zeroX,
-		    		   								   (zeroY - ((previousMeasured-minValueY)*scaleY)),
-													   (time-minValueX)*scaleX+zeroX,
-													   (zeroY - ((measured-minValueY)*scaleY)));
-		       measuredLines.add(measuredLine);
-		       
-		       Line2D outputLine = new Line2D.Double((previousTime-minValueX)*scaleX+zeroX,
-		    		   								 (zeroY - ((previousOutput-minValueY)*scaleY)),
-												     (time-minValueX)*scaleX+zeroX,
-												     (zeroY - ((output-minValueY)*scaleY)));
-		       outputLines.add(outputLine);
-		       
-		       for(int i = 0 ; i < desiredLines.size() ; i++) {
-			       g2.setColor(Color.green);
-			       g2.draw(desiredLines.get(i));
-			       g2.setColor(Color.red);
-			       g2.draw(measuredLines.get(i));
-			       g2.setColor(Color.blue);
-			       g2.draw(outputLines.get(i));	
+		       for(int i = 0 ; i < rooms.size() ; i++) {
+			       g2.setColor(colors.get(i%colors.size()));
+			       Line2D measuredLine = new Line2D.Double((previousTime-minValueX)*scaleX+zeroX,
+							   (zeroY - ((previousMeasured.get(i)-minValueY)*scaleY)),
+						   (time-minValueX)*scaleX+zeroX,
+						   (zeroY - ((measured.get(i)-minValueY)*scaleY)));
+			       measuredLines.get(i).add(measuredLine);
+				
+			       for(int j = 0 ; j < measuredLines.get(i).size() ; j++) {
+			    	   g2.draw(measuredLines.get(i).get(j));
+			       }
+			       previousMeasured.set(i, measured.get(i));  
 		       }
-
-		       
-		       previousDesired = desired;
-		       previousMeasured = measured;
-		       previousOutput = output;
-		       previousTime = time;
-
+		       previousTime = time; 
 		       
 		       g2.setColor(Color.black);
 		       g2.setStroke(new BasicStroke(1));
@@ -186,6 +146,11 @@ public abstract class TemperatureAIView
 			   g2.drawString(numberFormat.format(maxValueX), frame.getWidth()-8*(String.valueOf(numberFormat.format(maxValueX)).length()), zeroY+15);
 		       g2.drawString(numberFormat.format(maxValueY), zeroX-8*(String.valueOf(numberFormat.format(maxValueY)).length()), 0+15);
 		       g2.drawString(numberFormat.format(minValueY), zeroX-8*(String.valueOf(numberFormat.format(minValueY)).length()), zeroY-8);
+		       
+		       for(int i = 0 ; i < rooms.size() ; i++) {
+			       g2.setColor(colors.get(i%colors.size()));
+			       g2.drawString(rooms.get(i).getClass().getSimpleName(),0, 100+15*i);   
+		       }
             }
 	    };
 	    
@@ -201,19 +166,19 @@ public abstract class TemperatureAIView
 	/**
 	 * Refreshes the frame
 	 */
-	public static void updateView(double time, double desired, double measured, double output)
+	public static void updateView(double time, ArrayList<Double> measured)
 	{
 		if(initialized) {
 			if(previousTime > time) {
-			    TemperatureAIView.previousTime -= 24.0;
-			    desiredLines.clear();
-			    measuredLines.clear();
-			    outputLines.clear();
+				TemperatureAIViewMultiple.previousTime -= 24.0;
+				for(int i = 0 ; i < rooms.size() ; i++) {
+				    measuredLines.get(i).clear();	
+				}
 			}
-			TemperatureAIView.desired = desired;
-			TemperatureAIView.time = time;
-			TemperatureAIView.measured = measured;
-			TemperatureAIView.output = output;
+			TemperatureAIViewMultiple.time = time;
+			for(int i = 0 ; i < rooms.size() ; i++) {
+				TemperatureAIViewMultiple.measured.set(i,measured.get(i));
+			}
 			frame.repaint();	
 		}
 	}
