@@ -73,8 +73,17 @@ public abstract class TemperatureAI {
 	 */
 	public static void evaluateDesiredValue(int n) {
 		Room r = House.getInstance().getRooms().get(n);
+		Sensor<Object> presence = r.getSensorByType(SensorType.PRESENCE).get(0);
 		Double month = (double) DeepHouseCalendar.getInstance().getCalendar().get(Calendar.MONTH);
-		Double hour = (double) DeepHouseCalendar.getInstance().getCalendar().get(Calendar.HOUR_OF_DAY);
+		Double hour;
+		if(((Boolean)presence.getLastValue()).booleanValue()) {
+			//If present => use current prefered value
+			hour = (double) DeepHouseCalendar.getInstance().getCalendar().get(Calendar.HOUR_OF_DAY);
+		}
+		else {
+			//Not present => use midnight prefered value
+			hour = 0.0;
+		}
 		ArrayList<Double> inputs = new ArrayList<Double>();
 		inputs.add(month/6.0 - 1.0);
 		inputs.add(hour/12.0 -1.0);
