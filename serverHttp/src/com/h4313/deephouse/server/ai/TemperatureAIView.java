@@ -132,24 +132,24 @@ public abstract class TemperatureAIView
 		       int zeroY = frame.getHeight()-frame.getHeight()/6;
 		       int zeroX = frame.getWidth()/12; 
 		       Double scaleX = (double)(frame.getWidth()-zeroX)/(maxValueX-minValueX);
-		       Double scaleY = (double)(frame.getHeight()-zeroY)/(maxValueY-minValueY);
+		       Double scaleY = (double)(zeroY)/(maxValueY-minValueY);
 
 		       Line2D desiredLine = new Line2D.Double((previousTime-minValueX)*scaleX+zeroX,
-			    		   							  (frame.getHeight() - ((previousDesired-minValueY)*scaleY+zeroY)),
+			    		   							  (zeroY - ((previousDesired-minValueY)*scaleY)),
 			    		   							  (time-minValueX)*scaleX+zeroX,
-			    		   							  (frame.getHeight() - ((desired-minValueY)*scaleY+zeroY)));
+			    		   							  (zeroY - ((desired-minValueY)*scaleY)));
 		       desiredLines.add(desiredLine);
 		       
 		       Line2D measuredLine = new Line2D.Double((previousTime-minValueX)*scaleX+zeroX,
-													   (frame.getHeight() - ((previousMeasured-minValueY)*scaleY+zeroY)),
+		    		   								   (zeroY - ((previousMeasured-minValueY)*scaleY)),
 													   (time-minValueX)*scaleX+zeroX,
-													   (frame.getHeight() - ((measured-minValueY)*scaleY+zeroY)));
+													   (zeroY - ((measured-minValueY)*scaleY)));
 		       measuredLines.add(measuredLine);
 		       
 		       Line2D outputLine = new Line2D.Double((previousTime-minValueX)*scaleX+zeroX,
-												     (frame.getHeight() - ((previousOutput-minValueY)*scaleY+zeroY)),
+		    		   								 (zeroY - ((previousOutput-minValueY)*scaleY)),
 												     (time-minValueX)*scaleX+zeroX,
-												     (frame.getHeight() - ((output-minValueY)*scaleY+zeroY)));
+												     (zeroY - ((output-minValueY)*scaleY)));
 		       outputLines.add(outputLine);
 		       
 		       for(int i = 0 ; i < desiredLines.size() ; i++) {

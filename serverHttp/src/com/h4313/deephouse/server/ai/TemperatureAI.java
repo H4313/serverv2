@@ -25,10 +25,13 @@ public abstract class TemperatureAI {
 	
 	public static ArrayList<NeuralNetwork> nets;
 	
+	public static Integer roomViewed;
+	
 	/**
 	 * Initialize the AI. Has to be called before the first call of a method
 	 */
 	public static void initTemperatureAI() {
+		roomViewed = -1;
 		previousTime = new ArrayList<Long>();
 		integralFactor = new ArrayList<Double>();
 		proportionalFactor = new ArrayList<Double>();
@@ -42,7 +45,9 @@ public abstract class TemperatureAI {
 			integral.add(0.0);
 			nets.add(new NeuralNetwork("fileconfig/temperatures.xml",0.05));
 		}
-		TemperatureAIView.initTemperatureAIView(0.0, 24.0, 23.0, 26.0, House.getInstance().getRooms().get(0));
+		//Comment those two lines if you dont want to get the temperature graph
+		roomViewed = 0;
+		TemperatureAIView.initTemperatureAIView(0.0, 24.0, 15.0, 25.0, House.getInstance().getRooms().get(roomViewed));
 	}
 	
 	/**
@@ -52,7 +57,7 @@ public abstract class TemperatureAI {
 		for(int i = 0 ; i < House.getInstance().getRooms().size() ; i++) {
 			evaluateDesiredValue(i);
 			piControl(i);
-			if(i == 0) {
+			if(i == roomViewed) {
 				TemperatureAIView.updateView( (double) DeepHouseCalendar.getInstance().getCalendar().get(Calendar.HOUR_OF_DAY)
 													 + DeepHouseCalendar.getInstance().getCalendar().get(Calendar.MINUTE)/60.0
 											, (Double) House.getInstance().getRooms().get(i).getActuatorByType(ActuatorType.RADIATOR).get(0).getDesiredValue()
@@ -68,7 +73,7 @@ public abstract class TemperatureAI {
 	 */
 	public static void evaluateDesiredValue(int n) {
 		Room r = House.getInstance().getRooms().get(n);
-		Double month = (double) DeepHouseCalendar.getInstance().getCalendar().get(Calendar.MONTH) + 1;
+		Double month = (double) DeepHouseCalendar.getInstance().getCalendar().get(Calendar.MONTH);
 		Double hour = (double) DeepHouseCalendar.getInstance().getCalendar().get(Calendar.HOUR_OF_DAY);
 		ArrayList<Double> inputs = new ArrayList<Double>();
 		inputs.add(month/6.0 - 1.0);
