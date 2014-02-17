@@ -44,16 +44,6 @@ public class DeepHouseServicesImpl implements DeepHouseServices {
 	public DeepHouseServicesImpl() throws DeepHouseException {
 		houseDAO = new HouseDAO();
 		House.initInstance(houseDAO);
-
-		/*
-		 * House h = House.getInstance(); h.printInformations();
-		 * 
-		 * h.addActuator(0, "Haha1", ActuatorType.DOORCONTROL.name());
-		 * h.addSensor(0, "hah2", SensorType.DOOR.name());
-		 * h.printInformations();
-		 * 
-		 * houseDAO.createUpdate(h);
-		 */
 	}
 
 	@GET
@@ -66,7 +56,8 @@ public class DeepHouseServicesImpl implements DeepHouseServices {
 
 			// Initialisation de la maison // TODO : RETIRER POUR LA PRODUCTION
 			{
-				List<Room> rooms = House.getInstance().getRooms();
+				House h = House.getInstance();
+				List<Room> rooms = h.getRooms();
 				int id = 0;
 				for (Room room : rooms) {
 					room.addSensor(DecToHexConverter.decToHex(id++),
@@ -96,7 +87,8 @@ public class DeepHouseServicesImpl implements DeepHouseServices {
 					room.establishConnections();
 				}
 				System.out.println("Done init");
-				House.getInstance().printInformations();
+				h.printInformations();
+				houseDAO.createUpdate(h);
 			}
 			// done init
 
@@ -143,6 +135,7 @@ public class DeepHouseServicesImpl implements DeepHouseServices {
 			return getErrorJSONString(e);
 		}
 	}
+
 
 	@GET
 	@Path("/houseModel")

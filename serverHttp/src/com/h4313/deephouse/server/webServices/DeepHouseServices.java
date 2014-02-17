@@ -1,7 +1,5 @@
 package com.h4313.deephouse.server.webServices;
 
-import com.h4313.deephouse.housemodel.House;
-
 public interface DeepHouseServices {
 	
 	public String connect();
