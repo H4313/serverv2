@@ -46,8 +46,8 @@ public abstract class TemperatureAI {
 		}
 		roomViewed = 3;
 		//Comment those two lines if you dont want to get the temperature graphs
-		TemperatureAIView.initTemperatureAIView(0.0, 24.0, 15.0, 25.0, House.getInstance().getRooms().get(roomViewed));
-		TemperatureAIViewMultiple.initTemperatureAIViewMultiple(0.0, 24.0, 15.0, 25.0, House.getInstance().getRooms());
+		TemperatureAIView.initTemperatureAIView(0.0, 24.0, 13.0, 25.0, House.getInstance().getRooms().get(roomViewed));
+		TemperatureAIViewMultiple.initTemperatureAIViewMultiple(0.0, 24.0, 13.0, 25.0, House.getInstance().getRooms());
 	}
 	
 	/**
