@@ -55,7 +55,7 @@ public class TemperatureAIViewMultiple {
 	public static void initTemperatureAIViewMultiple(Double minValueX, Double maxValueX, Double minValueY, Double maxValueY, List<Room> rooms)
 	{
 		TemperatureAIViewMultiple.rooms = rooms;
-        frame = new JFrame("Temperatures (°C)");
+        frame = new JFrame("Temperatures (ï¿½C)");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationByPlatform(true);
         frame.setResizable(false);
@@ -132,9 +132,9 @@ public class TemperatureAIViewMultiple {
 		       g2.drawString(numberFormat.format(maxValueY), zeroX-9*(String.valueOf(numberFormat.format(maxValueY)).length()), 10);
 		       g2.drawString(numberFormat.format(minValueY), zeroX-9*(String.valueOf(numberFormat.format(minValueY)).length()), zeroY-5);
 		       
-		       for(int i = 1 ; i < 12 ; i++) {
+		       for(int i = 1 ; i < 24 ; i++) {
 		    	   g2.setColor(Color.black);
-		    	   int xGrad = (int) (minValueX+i*(maxValueX-minValueX)/12);
+		    	   int xGrad = (int) (minValueX+i*(maxValueX-minValueX)/24);
 		    	   g2.drawString(String.valueOf(xGrad), (int) ((xGrad-minValueX)*scaleX+zeroX), zeroY+25);
 		    	   Line2D xGradLine = new Line2D.Double(((xGrad-minValueX)*scaleX+zeroX),zeroY,((xGrad-minValueX)*scaleX+zeroX),zeroY+10);
 		    	   g2.draw(xGradLine);
@@ -144,9 +144,9 @@ public class TemperatureAIViewMultiple {
 		    	   g2.draw(xLine);
 		       }
 		       
-		       for(int i = 1 ; i < 10 ; i++) {
+		       for(int i = 1 ; i < 12 ; i++) {
 		    	   g2.setColor(Color.black);
-		    	   int yGrad = (int) (minValueY+i*(maxValueY-minValueY)/10);
+		    	   int yGrad = (int) (minValueY+i*(maxValueY-minValueY)/12);
 		    	   g2.drawString(numberFormat.format(yGrad), zeroX-9*(String.valueOf(numberFormat.format(yGrad)).length()), (int) (zeroY - ((yGrad-minValueY)*scaleY)));
 		    	   Line2D yGradLine = new Line2D.Double(zeroX-10,(int) (zeroY - ((yGrad-minValueY)*scaleY)),zeroX,(int) (zeroY - ((yGrad-minValueY)*scaleY)));
 		    	   g2.draw(yGradLine);
