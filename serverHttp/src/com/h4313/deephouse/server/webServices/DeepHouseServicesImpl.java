@@ -89,6 +89,7 @@ public class DeepHouseServicesImpl implements DeepHouseServices {
 
 			return getSuccessJSONString();
 		} catch (Exception e) {
+			e.printStackTrace();
 			return getErrorJSONString(e);
 		}
 	}
@@ -104,7 +105,7 @@ public class DeepHouseServicesImpl implements DeepHouseServices {
 
 		try {
 			House h = House.getInstance();
-			h.addSensor(Integer.valueOf(piece), idCapteur, type);
+			h.addSensor(Integer.valueOf(piece), idCapteur.toUpperCase(), type.toUpperCase());
 			houseDAO.createUpdate(h);
 			return getSuccessJSONString();
 		} catch (Exception e) {
@@ -123,7 +124,7 @@ public class DeepHouseServicesImpl implements DeepHouseServices {
 
 		try {
 			House h = House.getInstance();
-			h.addActuator(Integer.valueOf(piece), idActionneur, type);
+			h.addActuator(Integer.valueOf(piece), idActionneur.toUpperCase(), type.toUpperCase());
 			houseDAO.createUpdate(h);
 			return getSuccessJSONString();
 		} catch (Exception e) {
@@ -155,12 +156,12 @@ public class DeepHouseServicesImpl implements DeepHouseServices {
 	@Consumes("application/x-www-form-urlencoded")
 	public String userAction(@FormParam("piece") String piece,
 			@FormParam("typeAction") String typeAction,
-			@FormParam("valeur") String valeur,
-			@FormParam("idActionneur") String idActionneur) {
+			@FormParam("valeur") String valeur) {
 
 		try {
-			House.getInstance().userAction(Integer.valueOf(piece), typeAction,
-					valeur, idActionneur);
+			House.getInstance().userAction(Integer.valueOf(piece), 
+					typeAction.toUpperCase(),
+					valeur);
 
 			return getSuccessJSONString();
 		} catch (Exception e) {

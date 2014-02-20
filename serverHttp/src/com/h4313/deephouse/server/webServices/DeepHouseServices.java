@@ -10,5 +10,5 @@ public interface DeepHouseServices {
 	
 	public String getHouse();
 	
-	public String userAction(String piece, String typeAction, String valeur, String idActionneur);
+	public String userAction(String piece, String typeAction, String valeur);
 }
