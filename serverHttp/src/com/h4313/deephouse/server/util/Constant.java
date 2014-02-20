@@ -6,4 +6,6 @@ public abstract class Constant {
 	public static final long DELAY_BEFORE_LIGHTS_OFF_INIT = 300;
 	
 	public static final long OPENED_DURATION_INIT = 1800;
+	
+	public static final double EMPTY_ROOM_TEMPERATURE = 15.0;
 }
