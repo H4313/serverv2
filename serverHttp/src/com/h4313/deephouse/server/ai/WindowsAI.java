@@ -40,18 +40,19 @@ public abstract class WindowsAI {
 		}
 	}
 	
-	public static void stopHeaterIfOpened(int n) {
+	public static boolean stopHeaterIfOpened(int n) {
 		Room r = House.getInstance().getRooms().get(n);
 		ArrayList<Sensor<Object>> windows = r.getSensorByType(SensorType.WINDOW);
 		Actuator<Object> heater = r.getActuatorByType(ActuatorType.RADIATOR).get(0);
 		for(Sensor<Object> w : windows) {
 			if(((Boolean) w.getLastValue()).booleanValue()) {
-				heater.setLastValue(16.0);
+				heater.setLastValue(Constant.EMPTY_ROOM_TEMPERATURE);
 				heater.setModified(true);
 				openingTime.set(n,DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000);
-				break;
+				return true;
 			}
 		}
+		return false;
 	}
 	
 	public static void closeWindows(int n) {
