@@ -9,12 +9,15 @@ import java.awt.RenderingHints;
 import java.awt.geom.Line2D;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.h4313.deephouse.housemodel.Room;
+import com.h4313.deephouse.util.DeepHouseCalendar;
 
 
 /**
@@ -141,9 +144,9 @@ public abstract class TemperatureAIView
 		       g2.drawString(numberFormat.format(maxValueY), zeroX-9*(String.valueOf(numberFormat.format(maxValueY)).length()), 10);
 		       g2.drawString(numberFormat.format(minValueY), zeroX-9*(String.valueOf(numberFormat.format(minValueY)).length()), zeroY-5);
 		       
-		       for(int i = 1 ; i < 24 ; i++) {
+		       for(int i = 1 ; i < (maxValueX-minValueX) ; i++) {
 		    	   g2.setColor(Color.black);
-		    	   int xGrad = (int) (minValueX+i*(maxValueX-minValueX)/24);
+		    	   int xGrad = (int) (minValueX+i);
 		    	   g2.drawString(String.valueOf(xGrad), (int) ((xGrad-minValueX)*scaleX+zeroX), zeroY+25);
 		    	   Line2D xGradLine = new Line2D.Double(((xGrad-minValueX)*scaleX+zeroX),zeroY,((xGrad-minValueX)*scaleX+zeroX),zeroY+10);
 		    	   g2.draw(xGradLine);
@@ -153,9 +156,9 @@ public abstract class TemperatureAIView
 		    	   g2.draw(xLine);
 		       }
 		       
-		       for(int i = 1 ; i < 12 ; i++) {
+		       for(int i = 1 ; i < (maxValueY-minValueY) ; i++) {
 		    	   g2.setColor(Color.black);
-		    	   int yGrad = (int) (minValueY+i*(maxValueY-minValueY)/12);
+		    	   int yGrad = (int) (minValueY+i);
 		    	   g2.drawString(numberFormat.format(yGrad), zeroX-9*(String.valueOf(numberFormat.format(yGrad)).length()), (int) (zeroY - ((yGrad-minValueY)*scaleY)));
 		    	   Line2D yGradLine = new Line2D.Double(zeroX-10,(int) (zeroY - ((yGrad-minValueY)*scaleY)),zeroX,(int) (zeroY - ((yGrad-minValueY)*scaleY)));
 		    	   g2.draw(yGradLine);
@@ -164,6 +167,29 @@ public abstract class TemperatureAIView
 		    	   Line2D yLine = new Line2D.Double(zeroX+1,(int) (zeroY - ((yGrad-minValueY)*scaleY)),frame.getWidth(),(int) (zeroY - ((yGrad-minValueY)*scaleY)));
 		    	   g2.draw(yLine);
 		       }
+		       
+		       g2.setColor(Color.black);
+		       Font fontDate = new Font(g2.getFont().getName(),Font.BOLD,g2.getFont().getSize()+5);
+		       g2.setFont(fontDate);
+		       SimpleDateFormat formatter = new SimpleDateFormat();
+		       String currentDate = formatter.format(DeepHouseCalendar.getInstance().getCalendar().getTime());
+		       if(DeepHouseCalendar.getInstance().getCalendar().get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY)
+		    	   currentDate = "Monday " + currentDate;
+		       else if(DeepHouseCalendar.getInstance().getCalendar().get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY)
+		    	   currentDate = "Tuesday " + currentDate;
+		       else if(DeepHouseCalendar.getInstance().getCalendar().get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY)
+		    	   currentDate = "Wednesday " + currentDate;
+		       else if(DeepHouseCalendar.getInstance().getCalendar().get(Calendar.DAY_OF_WEEK) == Calendar.THURSDAY)
+		    	   currentDate = "Thursday " + currentDate;
+		       else if(DeepHouseCalendar.getInstance().getCalendar().get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY)
+		    	   currentDate = "Friday " + currentDate;
+		       else if(DeepHouseCalendar.getInstance().getCalendar().get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)
+		    	   currentDate = "Saturday " + currentDate;
+		       else if(DeepHouseCalendar.getInstance().getCalendar().get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)
+		    	   currentDate = "Sunday " + currentDate;
+		       
+		       g2.drawString(currentDate,frame.getWidth()/2,frame.getHeight()-50);
+		       
 		       
 		       g2.setColor(Color.green);
 		       g2.drawString("Desired",0, 115);
