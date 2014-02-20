@@ -151,7 +151,7 @@ public class DeepHouseServicesImpl implements DeepHouseServices {
 	}
 
 	@Override
-	@PUT
+	@POST
 	@Path("/userAction")
 	@Consumes("application/x-www-form-urlencoded")
 	public String userAction(@FormParam("piece") String piece,
