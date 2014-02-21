@@ -43,7 +43,7 @@ public abstract class TemperatureAI {
 			integralFactor.add(0.3);
 			proportionalFactor.add(1.0);
 			integral.add(0.0);
-			nets.add(new NeuralNetwork("fileconfig/temperatures2.xml",0.05));
+			nets.add(new NeuralNetwork("temperatures2.xml",0.05));
 		}
 		roomViewed = 3;
 		//Comment those two lines if you dont want to get the temperature graphs

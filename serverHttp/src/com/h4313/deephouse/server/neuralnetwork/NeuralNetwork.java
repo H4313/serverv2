@@ -1,7 +1,9 @@
 package com.h4313.deephouse.server.neuralnetwork;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -65,7 +67,9 @@ public class NeuralNetwork {
 	public NeuralNetwork(String filename, Double learningRate) {
 		try {
 			 
-			File fXmlFile = new File(filename);
+			//File fXmlFile = new File(filename);
+			InputStream fXmlFile = getClass().getResourceAsStream(filename);
+			
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 			Document doc = dBuilder.parse(fXmlFile);
