@@ -1,5 +1,8 @@
 package com.h4313.deephouse.server.webServices;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Scanner;
 
@@ -30,6 +33,7 @@ import com.h4313.deephouse.sensor.SensorType;
 import com.h4313.deephouse.server.controller.Controller;
 import com.h4313.deephouse.util.DecToHexConverter;
 import com.h4313.deephouse.util.DeepHouseCalendar;
+import com.h4313.deephouse.util.Pair;
 
 @Path("/rest")
 // @Consumes("application/json")
@@ -42,10 +46,13 @@ import com.h4313.deephouse.util.DeepHouseCalendar;
 public class DeepHouseServicesImpl implements DeepHouseServices {
 
 	private HouseDAO houseDAO;
+	private ArrayList<Pair<Integer, Double>> temperatures;
 
 	public DeepHouseServicesImpl() throws DeepHouseException {
 		houseDAO = new HouseDAO();
 		House.initInstance(houseDAO);
+		
+//		temperatures = new ArrayList<Pair<Integer, Double>>();
 	}
 	
 	@GET
@@ -110,19 +117,102 @@ public class DeepHouseServicesImpl implements DeepHouseServices {
 			// Initialisation de l'horloge de simulation
 			DeepHouseCalendar.getInstance().init();
 			
-			// En attente de l'arret de la machine
-//			while(true);
-		
-//			Controller.getInstance().stopController();
-//			
-//			
-//			System.out.println("Arret du serveur");
-			
 			return getSuccessJSONString();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return getErrorJSONString(e);
 		}
+	}
+	
+	@GET
+	@Path("/chart")
+	@Produces("text/html")
+	@Override
+	public String chart() {
+		
+			SimpleDateFormat formatter = new SimpleDateFormat();
+		   String currentDate = formatter.format(DeepHouseCalendar.getInstance().getCalendar().getTime());
+		   if(DeepHouseCalendar.getInstance().getCalendar().get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY)
+			   currentDate = "Lundi " + currentDate;
+		   else if(DeepHouseCalendar.getInstance().getCalendar().get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY)
+			   currentDate = "Mardi " + currentDate;
+		   else if(DeepHouseCalendar.getInstance().getCalendar().get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY)
+			   currentDate = "Mercredi " + currentDate;
+		   else if(DeepHouseCalendar.getInstance().getCalendar().get(Calendar.DAY_OF_WEEK) == Calendar.THURSDAY)
+			   currentDate = "Jeudi " + currentDate;
+		   else if(DeepHouseCalendar.getInstance().getCalendar().get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY)
+			   currentDate = "Vendredi " + currentDate;
+		   else if(DeepHouseCalendar.getInstance().getCalendar().get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)
+			   currentDate = "Samedi " + currentDate;
+		   else if(DeepHouseCalendar.getInstance().getCalendar().get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)
+			   currentDate = "Dimanche " + currentDate;
+		   
+		   int hour = DeepHouseCalendar.getInstance().getCalendar().get(Calendar.HOUR_OF_DAY);
+		   if(hour == 0)
+		   {
+			   temperatures.clear();
+		   }
+		   
+		   for(Room room : House.getInstance().getRooms())
+		   {
+			   temperatures.add(new Pair<Integer, Double>(Integer.valueOf(hour), 
+					   (Double) room.getSensorByType(SensorType.TEMPERATURE).get(0).getLastValue()));
+		   }
+//		   .getLastValue()
+//		   stocker les valeurs de last value dans une arraylist
+			String str = "<html><head>";
+			str += "<script type='text/javascript' src='https://www.google.com/jsapi'></script>";
+			str += "<script type='text/javascript'>";
+			str += "setTimeout(function(){";
+			str += "window.location.reload(1);";
+			str += "}, 1000);";
+			str += "google.load('visualization', '1', {packages:['corechart']});";
+			str += "google.setOnLoadCallback(drawChart);";
+			str += "function drawChart() {";
+			str += "var data = google.visualization.arrayToDataTable([";
+			str += "['Heures'";
+			// Rooms name
+			for(Room room : House.getInstance().getRooms())
+			{
+				str += ", '" + room.getName() + "'";
+			}
+			str += "],";
+			
+			int previousHour = Integer.valueOf(-1);
+			int tmpHour;
+			double tmpTemperature;
+			for(Pair<Integer, Double> temperature : temperatures)
+			{
+				tmpHour = ((Integer) temperature.getFirst()).intValue();
+				tmpTemperature = ((Double)temperature.getSecond()).doubleValue();
+				
+				if(previousHour != tmpHour)
+				{
+					if(previousHour != -1)
+						str += "],";
+					
+					str += "['" + tmpHour + "'";
+				}
+				str += ", " + tmpTemperature;
+			}
+			str += "],";
+//			str += "['2005',  1170,      460],";
+//			str += "['2006',  660,       1120],";
+//			str += "['2007',  1030,      540]";
+			str = str.substring(0, str.length()-1);
+			str += "]);";
+			str += "var options = {";
+			str += "title: 'Evolution de la température réelle dans les pièces de la maison : " + currentDate + "'";
+			str += "};";
+			str += "var chart = new google.visualization.LineChart(document.getElementById('chart_div'));";
+			str += "chart.draw(data, options);";
+			str += "}";
+			str += "</script>";
+			str += "</head><body>";
+			str += "<div id='chart_div' style='width: 1000px; height: 700px;'></div>";
+			str += "</body></html>";
+			
+			return str;
 	}
 
 	@Override
