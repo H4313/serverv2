@@ -1,6 +1,7 @@
 package com.h4313.deephouse.server.webServices;
 
 import java.util.List;
+import java.util.Scanner;
 
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -26,6 +27,7 @@ import com.h4313.deephouse.housemodel.House;
 import com.h4313.deephouse.housemodel.Room;
 import com.h4313.deephouse.sensor.Sensor;
 import com.h4313.deephouse.sensor.SensorType;
+import com.h4313.deephouse.server.controller.Controller;
 import com.h4313.deephouse.util.DecToHexConverter;
 import com.h4313.deephouse.util.DeepHouseCalendar;
 
@@ -45,7 +47,7 @@ public class DeepHouseServicesImpl implements DeepHouseServices {
 		houseDAO = new HouseDAO();
 		House.initInstance(houseDAO);
 	}
-
+	
 	@GET
 	@Path("/connect")
 	@Override
@@ -87,6 +89,35 @@ public class DeepHouseServicesImpl implements DeepHouseServices {
 			h.printInformations();
 			houseDAO.createUpdate(h);
 
+			return getSuccessJSONString();
+		} catch (Exception e) {
+			return getErrorJSONString(e);
+		}
+	}
+
+	@GET
+	@Path("/runServer")
+	@Override
+	public String runServer() {
+		
+		try
+		{
+			// Initialisation du reseau
+			Controller.getInstance().initSensorsListener(Integer.valueOf("6001").intValue());
+			Controller.getInstance().initActuatorsSender("127.0.0.1", Integer.valueOf("6002").intValue());
+			Controller.getInstance().start();
+	
+			// Initialisation de l'horloge de simulation
+			DeepHouseCalendar.getInstance().init();
+			
+			// En attente de l'arret de la machine
+//			while(true);
+		
+//			Controller.getInstance().stopController();
+//			
+//			
+//			System.out.println("Arret du serveur");
+			
 			return getSuccessJSONString();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -173,7 +204,7 @@ public class DeepHouseServicesImpl implements DeepHouseServices {
 		try {
 			JSONObject json = new JSONObject();
 			json.put("success", false);
-			json.put("msg", e.getMessage());
+			json.put("msg", "Error message : " + e.getMessage());
 			return json.toString();
 		} catch (JSONException e1) {
 			System.out.println(e1.getMessage());

@@ -4,6 +4,8 @@ public interface DeepHouseServices {
 	
 	public String connect();
 	
+	public String runServer();
+	
 	public String addSensor(String piece, String idCapteur, String type);
 	
 	public String addActuator(String piece,  String idActionneur, String type);
