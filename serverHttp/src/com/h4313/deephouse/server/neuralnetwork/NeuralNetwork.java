@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import javax.print.DocFlavor.URL;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -67,9 +68,9 @@ public class NeuralNetwork {
 	public NeuralNetwork(String filename, Double learningRate) {
 		try {
 			 
-			//File fXmlFile = new File(filename);
 			InputStream fXmlFile = getClass().getResourceAsStream(filename);
-			
+
+			//File fXmlFile = new File(filename);
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 			Document doc = dBuilder.parse(fXmlFile);
