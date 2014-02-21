@@ -116,7 +116,7 @@ public class Controller extends Thread {
 	 */
 	private void updateModel() {
 		TemperatureAI.run();
-		WindowsAI.run();
+//		WindowsAI.run();
 		LightAI.run();
 	}
 	
