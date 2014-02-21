@@ -45,14 +45,14 @@ import com.h4313.deephouse.util.Pair;
  */
 public class DeepHouseServicesImpl implements DeepHouseServices {
 
-	private HouseDAO houseDAO;
+//	private HouseDAO houseDAO;
 	private ArrayList<Pair<Integer, Double>> temperatures;
 
 	public DeepHouseServicesImpl() throws DeepHouseException {
-		houseDAO = new HouseDAO();
-		House.initInstance(houseDAO);
+//		houseDAO = new HouseDAO();
+//		House.initInstance(houseDAO);
 		
-//		temperatures = new ArrayList<Pair<Integer, Double>>();
+		temperatures = new ArrayList<Pair<Integer, Double>>();
 	}
 	
 	@GET
@@ -94,6 +94,7 @@ public class DeepHouseServicesImpl implements DeepHouseServices {
 			}
 			System.out.println("Done init");
 			h.printInformations();
+			HouseDAO houseDAO = new HouseDAO();
 			houseDAO.createUpdate(h);
 
 			return getSuccessJSONString();
@@ -129,7 +130,6 @@ public class DeepHouseServicesImpl implements DeepHouseServices {
 	@Produces("text/html")
 	@Override
 	public String chart() {
-		
 			SimpleDateFormat formatter = new SimpleDateFormat();
 		   String currentDate = formatter.format(DeepHouseCalendar.getInstance().getCalendar().getTime());
 		   if(DeepHouseCalendar.getInstance().getCalendar().get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY)
@@ -163,9 +163,9 @@ public class DeepHouseServicesImpl implements DeepHouseServices {
 			String str = "<html><head>";
 			str += "<script type='text/javascript' src='https://www.google.com/jsapi'></script>";
 			str += "<script type='text/javascript'>";
-			str += "setTimeout(function(){";
+			str += "window.onload=function(){ setTimeout(function(){";
 			str += "window.location.reload(1);";
-			str += "}, 1000);";
+			str += "}, 6000); };";
 			str += "google.load('visualization', '1', {packages:['corechart']});";
 			str += "google.setOnLoadCallback(drawChart);";
 			str += "function drawChart() {";
@@ -192,24 +192,26 @@ public class DeepHouseServicesImpl implements DeepHouseServices {
 						str += "],";
 					
 					str += "['" + tmpHour + "'";
+					
+					previousHour = tmpHour;
 				}
 				str += ", " + tmpTemperature;
 			}
 			str += "],";
-//			str += "['2005',  1170,      460],";
-//			str += "['2006',  660,       1120],";
-//			str += "['2007',  1030,      540]";
 			str = str.substring(0, str.length()-1);
 			str += "]);";
 			str += "var options = {";
-			str += "title: 'Evolution de la température réelle dans les pièces de la maison : " + currentDate + "'";
+			str += "width: 1000, height: 500,";
+			str += "title: 'Evolution de la temperature des pieces de la maison : " + currentDate + "',";
+			str += "hAxis: { minValue: 0, maxValue: 24, viewWindow:{min: 0, max: 24} },";
+			str += "vAxis: { minValue: 13, maxValue: 23, viewWindow:{min: 13, max: 23} }";
 			str += "};";
 			str += "var chart = new google.visualization.LineChart(document.getElementById('chart_div'));";
 			str += "chart.draw(data, options);";
 			str += "}";
 			str += "</script>";
 			str += "</head><body>";
-			str += "<div id='chart_div' style='width: 1000px; height: 700px;'></div>";
+			str += "<div id='chart_div' style='width: 1000px; height: 500px;'></div>";
 			str += "</body></html>";
 			
 			return str;
@@ -227,6 +229,7 @@ public class DeepHouseServicesImpl implements DeepHouseServices {
 		try {
 			House h = House.getInstance();
 			h.addSensor(Integer.valueOf(piece), idCapteur.toUpperCase(), type.toUpperCase());
+			HouseDAO houseDAO = new HouseDAO();
 			houseDAO.createUpdate(h);
 			return getSuccessJSONString();
 		} catch (Exception e) {
@@ -246,6 +249,7 @@ public class DeepHouseServicesImpl implements DeepHouseServices {
 		try {
 			House h = House.getInstance();
 			h.addActuator(Integer.valueOf(piece), idActionneur.toUpperCase(), type.toUpperCase());
+			HouseDAO houseDAO = new HouseDAO();
 			houseDAO.createUpdate(h);
 			return getSuccessJSONString();
 		} catch (Exception e) {
