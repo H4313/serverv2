@@ -8,4 +8,6 @@ public abstract class Constant {
 	public static final long OPENED_DURATION_INIT = 1800;
 	
 	public static final double EMPTY_ROOM_TEMPERATURE = 15.0;
+	
+	public static final double LEARNING_RATE_INIT = 0.05;
 }

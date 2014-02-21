@@ -43,7 +43,7 @@ public abstract class TemperatureAI {
 			integralFactor.add(0.3);
 			proportionalFactor.add(1.0);
 			integral.add(0.0);
-			nets.add(new NeuralNetwork("fileconfig/temperatures2.xml",0.04));
+			nets.add(new NeuralNetwork("fileconfig/temperatures2.xml",0.05));
 		}
 		roomViewed = 3;
 		//Comment those two lines if you dont want to get the temperature graphs
@@ -80,21 +80,50 @@ public abstract class TemperatureAI {
 	public static void evaluateDesiredValue(int n) {
 		Room r = House.getInstance().getRooms().get(n);
 		Sensor<Object> presence = r.getSensorByType(SensorType.PRESENCE).get(0);
+		Actuator<Object> heater = r.getActuatorByType(ActuatorType.RADIATOR).get(0);
 		Double output;
-		if(((Boolean)presence.getLastValue()).booleanValue()) {
-			//If present => use current prefered value
+		if(((Double)heater.getUserValue()).equals(Double.NEGATIVE_INFINITY)) {
+			//USE THE MODEL VALUE
+			if(((Boolean)presence.getLastValue()).booleanValue()) {
+				//If present => use current prefered value
+				Double month = (double) DeepHouseCalendar.getInstance().getCalendar().get(Calendar.MONTH);
+				Double hour = (double) DeepHouseCalendar.getInstance().getCalendar().get(Calendar.HOUR_OF_DAY);
+				ArrayList<Double> inputs = new ArrayList<Double>();
+				inputs.add(month/6.0 - 1.0);
+				inputs.add(hour/12.0 -1.0);
+				nets.get(n).propagate(inputs);
+				output = nets.get(n).getOutputScaled();
+			}
+			else {
+				//Not present
+				output = Constant.EMPTY_ROOM_TEMPERATURE;
+			}
+		}
+		else {
+			//USE THE USER VALUE AND LEARN
+			output = (Double)heater.getUserValue();
 			Double month = (double) DeepHouseCalendar.getInstance().getCalendar().get(Calendar.MONTH);
 			Double hour = (double) DeepHouseCalendar.getInstance().getCalendar().get(Calendar.HOUR_OF_DAY);
 			ArrayList<Double> inputs = new ArrayList<Double>();
 			inputs.add(month/6.0 - 1.0);
 			inputs.add(hour/12.0 -1.0);
 			nets.get(n).propagate(inputs);
-			output = nets.get(n).getOutputScaled();
+			//If first day of the month => resets the learning rate
+			if(DeepHouseCalendar.getInstance().getCalendar().get(Calendar.DAY_OF_MONTH) == 1) {
+				nets.get(n).setGlobalLearningRate(Constant.LEARNING_RATE_INIT);
+			}
+			//Backpropagation learning, decrease the learning rate
+			nets.get(n).backpropagate(output);
+			//Learning rate decrease
+			nets.get(n).setGlobalLearningRate(nets.get(n).getGlobalLearningRate()*0.8);
+			try {
+				heater.setUserValue(Double.NEGATIVE_INFINITY);		
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
 		}
-		else {
-			//Not present
-			output = Constant.EMPTY_ROOM_TEMPERATURE;
-		}
+
 
 		try {
 			r.getActuatorByType(ActuatorType.RADIATOR).get(0).setDesiredValue(output);	
