@@ -1,5 +1,10 @@
 package com.h4313.deephouse.server.controller;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
@@ -33,7 +38,7 @@ public class Controller extends Thread {
         this.alive = true;
 	}
 	
-	public static final Controller getInstance() {
+	public static final Controller getInstance() {		    
         if (Controller.instance == null) {
             synchronized(Controller.class) {
               if (Controller.instance == null) {
@@ -66,7 +71,7 @@ public class Controller extends Thread {
 					sendActuators();	
 				}
 				else {
-					Thread.sleep(2000);
+					Thread.sleep(1000);
 				}
 			}
 		} catch(Exception e) {

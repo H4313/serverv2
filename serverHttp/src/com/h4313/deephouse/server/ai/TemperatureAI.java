@@ -47,8 +47,8 @@ public abstract class TemperatureAI {
 		}
 		roomViewed = 3;
 		//Comment those two lines if you dont want to get the temperature graphs
-		TemperatureAIView.initTemperatureAIView(0.0, 24.0, 13.0, 25.0, House.getInstance().getRooms().get(roomViewed));
-		TemperatureAIViewMultiple.initTemperatureAIViewMultiple(0.0, 24.0, 13.0, 25.0, House.getInstance().getRooms());
+//		TemperatureAIView.initTemperatureAIView(0.0, 24.0, 13.0, 25.0, House.getInstance().getRooms().get(roomViewed));
+//		TemperatureAIViewMultiple.initTemperatureAIViewMultiple(0.0, 24.0, 13.0, 25.0, House.getInstance().getRooms());
 	}
 	
 	/**
@@ -59,18 +59,18 @@ public abstract class TemperatureAI {
 		for(int i = 0 ; i < House.getInstance().getRooms().size() ; i++) {
 			evaluateDesiredValue(i);
 			piControl(i);
-			if(i == roomViewed) {
-				TemperatureAIView.updateView( (double) DeepHouseCalendar.getInstance().getCalendar().get(Calendar.HOUR_OF_DAY)
-													 + DeepHouseCalendar.getInstance().getCalendar().get(Calendar.MINUTE)/60.0
-											, (Double) House.getInstance().getRooms().get(i).getActuatorByType(ActuatorType.RADIATOR).get(0).getDesiredValue()
-											, (Double) House.getInstance().getRooms().get(i).getSensorByType(SensorType.TEMPERATURE).get(0).getLastValue()
-											, (Double) House.getInstance().getRooms().get(i).getActuatorByType(ActuatorType.RADIATOR).get(0).getLastValue());
-			}
+//			if(i == roomViewed) {
+//				TemperatureAIView.updateView( (double) DeepHouseCalendar.getInstance().getCalendar().get(Calendar.HOUR_OF_DAY)
+//													 + DeepHouseCalendar.getInstance().getCalendar().get(Calendar.MINUTE)/60.0
+//											, (Double) House.getInstance().getRooms().get(i).getActuatorByType(ActuatorType.RADIATOR).get(0).getDesiredValue()
+//											, (Double) House.getInstance().getRooms().get(i).getSensorByType(SensorType.TEMPERATURE).get(0).getLastValue()
+//											, (Double) House.getInstance().getRooms().get(i).getActuatorByType(ActuatorType.RADIATOR).get(0).getLastValue());
+//			}
 			measured.add((Double) House.getInstance().getRooms().get(i).getSensorByType(SensorType.TEMPERATURE).get(0).getLastValue());
 		}
-		TemperatureAIViewMultiple.updateView((double) DeepHouseCalendar.getInstance().getCalendar().get(Calendar.HOUR_OF_DAY)
-				 + DeepHouseCalendar.getInstance().getCalendar().get(Calendar.MINUTE)/60.0
-			, measured);
+//		TemperatureAIViewMultiple.updateView((double) DeepHouseCalendar.getInstance().getCalendar().get(Calendar.HOUR_OF_DAY)
+//				 + DeepHouseCalendar.getInstance().getCalendar().get(Calendar.MINUTE)/60.0
+//			, measured);
 	}
 	
 	/***
@@ -82,7 +82,7 @@ public abstract class TemperatureAI {
 		Sensor<Object> presence = r.getSensorByType(SensorType.PRESENCE).get(0);
 		Actuator<Object> heater = r.getActuatorByType(ActuatorType.RADIATOR).get(0);
 		Double output;
-		if(((Double)heater.getUserValue()).equals(Double.NEGATIVE_INFINITY)) {
+		if(heater.getUserValue() == null) {
 			//USE THE MODEL VALUE
 			if(((Boolean)presence.getLastValue()).booleanValue()) {
 				//If present => use current prefered value
@@ -117,7 +117,7 @@ public abstract class TemperatureAI {
 			//Learning rate decrease
 			nets.get(n).setGlobalLearningRate(nets.get(n).getGlobalLearningRate()*0.8);
 			try {
-				heater.setUserValue(Double.NEGATIVE_INFINITY);		
+				heater.setUserValue(null);		
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
