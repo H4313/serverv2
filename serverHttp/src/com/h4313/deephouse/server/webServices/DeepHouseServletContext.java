@@ -6,6 +6,10 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
+import com.h4313.deephouse.dao.HouseDAO;
+import com.h4313.deephouse.exceptions.DeepHouseException;
+import com.h4313.deephouse.housemodel.House;
+
 
 
 @WebListener
@@ -18,6 +22,12 @@ public class DeepHouseServletContext implements ServletContextListener {
 	@SuppressWarnings("static-access")
 	public void contextInitialized(ServletContextEvent sce) {
 		logger.info("Context Initialized");
+		HouseDAO houseDAO = new HouseDAO();
+		try {
+			House.initInstance(houseDAO);
+		} catch (DeepHouseException e) {
+			e.printStackTrace();
+		}
 	}
 
 

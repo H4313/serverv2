@@ -45,13 +45,9 @@ import com.h4313.deephouse.util.Pair;
  */
 public class DeepHouseServicesImpl implements DeepHouseServices {
 
-//	private HouseDAO houseDAO;
 	private ArrayList<Pair<Integer, Double>> temperatures;
 
-	public DeepHouseServicesImpl() throws DeepHouseException {
-//		houseDAO = new HouseDAO();
-//		House.initInstance(houseDAO);
-		
+	public DeepHouseServicesImpl() {		
 		temperatures = new ArrayList<Pair<Integer, Double>>();
 	}
 	
