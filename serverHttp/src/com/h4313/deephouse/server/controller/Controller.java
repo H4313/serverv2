@@ -18,6 +18,7 @@ import com.h4313.deephouse.sensor.Sensor;
 import com.h4313.deephouse.sensor.SensorType;
 import com.h4313.deephouse.server.ai.LightAI;
 import com.h4313.deephouse.server.ai.TemperatureAI;
+import com.h4313.deephouse.server.ai.TemperatureHistory;
 import com.h4313.deephouse.server.ai.WindowsAI;
 
 public class Controller extends Thread {
@@ -46,8 +47,9 @@ public class Controller extends Thread {
               }
             }
             TemperatureAI.initTemperatureAI();
-            WindowsAI.initWindowsAI();
+//            WindowsAI.initWindowsAI();
             LightAI.initLightAI();
+            TemperatureHistory.initTemperatureHistory();
          }
          return Controller.instance;
 	}
@@ -118,6 +120,7 @@ public class Controller extends Thread {
 		TemperatureAI.run();
 //		WindowsAI.run();
 		LightAI.run();
+		TemperatureHistory.run();
 	}
 	
     public void stopController() {
