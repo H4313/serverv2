@@ -81,6 +81,7 @@ public abstract class LightAI {
 		Room r = House.getInstance().getRooms().get(n);
 		ArrayList<Sensor<Object>> presence = r.getSensorByType(SensorType.PRESENCE);
 		ArrayList<Actuator<Object>> lights = r.getActuatorByType(ActuatorType.LIGHTCONTROL);
+		ArrayList<Sensor<Object>> lightSensors = r.getSensorByType(SensorType.LIGHT);
 		boolean lightsOn = false;
 		for(int i = 0 ; i < lights.size() ; i++) {
 			if(((Boolean) lights.get(i).getLastValue()).booleanValue()) {
@@ -89,6 +90,7 @@ public abstract class LightAI {
 			}
 		}
 		for(Sensor<Object> p : presence) {
+			//Lights off because of delay
 			if(((Boolean)p.getLastValue()).booleanValue()) {
 				lastDetectedPresence.set(n,DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000);
 			}
@@ -99,7 +101,30 @@ public abstract class LightAI {
 					lights.get(i).setLastValue(false);
 					lights.get(i).setModified(true);
 				}
+				lastTimeLightsOn.set(n,DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000);
 				delayBeforeLightsOff.set(n, (long) (delayBeforeLightsOff.get(n)*0.8));
+				break;
+			}
+		}
+		for(int i = 0 ; i < lights.size() ; i++) {
+			//Lights off because user wants to using the tablet
+			if(!((Boolean)lights.get(i).getUserValue()).booleanValue()) {
+				for(int j = 0 ; j < lights.size() ; j++) {
+					lights.get(j).setLastValue(false);
+					lights.get(j).setModified(true);
+				}
+				lastTimeLightsOn.set(n,DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000);
+				break;
+			}
+		}
+		for(int i = 0 ; i < lightSensors.size() ; i++) {
+			//Lights off manually
+			if(!((Boolean)lightSensors.get(i).getLastValue()).booleanValue()) {
+				for(int j = 0 ; j < lights.size() ; j++) {
+					lights.get(j).setLastValue(false);
+					lights.get(j).setModified(true);
+				}
+				lastTimeLightsOn.set(n,DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000);
 				break;
 			}
 		}
