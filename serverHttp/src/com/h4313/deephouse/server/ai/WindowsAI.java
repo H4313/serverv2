@@ -55,7 +55,8 @@ public abstract class WindowsAI {
 		ArrayList<Actuator<Object>> windowClosers = r.getActuatorByType(ActuatorType.WINDOWCLOSER);
 		Actuator<Object> heater = r.getActuatorByType(ActuatorType.RADIATOR).get(0);
 		for(Actuator<Object> w : windowClosers) {
-			if(((Boolean) w.getSensors().get(0).getLastValue()).booleanValue()) {
+			Sensor<Object> wsensor = w.getSensors().entrySet().iterator().next().getValue();
+			if(((Boolean) wsensor.getLastValue()).booleanValue()) {
 				heater.setLastValue(Constant.EMPTY_ROOM_TEMPERATURE);
 				heater.setModified(true);
 				openingTime.set(n,DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000);
@@ -82,18 +83,21 @@ public abstract class WindowsAI {
 		ArrayList<Actuator<Object>> windowClosers = r.getActuatorByType(ActuatorType.WINDOWCLOSER);
 		long deltaTime = DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000 - openingTime.get(n);
 		for(Actuator<Object> w : windowClosers) {
+			Sensor<Object> wsensor = w.getSensors().entrySet().iterator().next().getValue();
 			if(!(((Boolean)w.getUserValue()).booleanValue())) {
 				//Closed by tablet
 				for(int i = 0 ; i < windowClosers.size() ; i++) {
-					windowClosers.get(i).setLastValue(true);
+					windowClosers.get(i).setLastValue(false);
+					windowClosers.get(i).setModified(true);
 				}
 				closedTime.set(n,DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000);
 				opened.set(n, false);
 			}
-			else if(!(((Boolean)w.getSensors().get(0).getLastValue()).booleanValue())) {
+			else if(!(((Boolean)wsensor.getLastValue()).booleanValue())) {
 				//Closed by hand
 				for(int i = 0 ; i < windowClosers.size() ; i++) {
-					windowClosers.get(i).setLastValue(true);
+					windowClosers.get(i).setLastValue(false);
+					windowClosers.get(i).setModified(true);
 				}
 				closedTime.set(n,DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000);
 				opened.set(n, false);
@@ -101,7 +105,8 @@ public abstract class WindowsAI {
 			else if(deltaTime > openedDuration.get(n)) {
 				//Closed by delay
 				for(int i = 0 ; i < windowClosers.size() ; i++) {
-					windowClosers.get(i).setLastValue(true);
+					windowClosers.get(i).setLastValue(false);
+					windowClosers.get(i).setModified(true);
 				}
 				closedTime.set(n,DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000);
 				opened.set(n, false);

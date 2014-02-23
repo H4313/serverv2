@@ -1,6 +1,7 @@
 package com.h4313.deephouse.server.ai;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import com.h4313.deephouse.actuator.Actuator;
 import com.h4313.deephouse.actuator.ActuatorType;
@@ -17,20 +18,62 @@ public abstract class LightAI {
 	
 	private static ArrayList<Long> delayBeforeLightsOff;
 	
+	private static ArrayList<Long> lastTimeLightsOn;
+	
 	public static void initLightAI() {
 		lastDetectedPresence = new ArrayList<Long>();
 		delayBeforeLightsOff = new ArrayList<Long>();
+		lastTimeLightsOn = new ArrayList<Long>();
 		int nRooms = House.getInstance().getRooms().size();
 		long initTime = DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000;
 		for(int i = 0 ; i < nRooms ; i++) {
 			lastDetectedPresence.add(initTime);
 			delayBeforeLightsOff.add(Constant.DELAY_BEFORE_LIGHTS_OFF_INIT);
+			lastTimeLightsOn.add(initTime);
 		}
 	}
 	
 	public static void run() {
 		for(int i = 0 ; i < House.getInstance().getRooms().size() ; i++) {
+			setLightsOn(i);
 			setLightsOff(i);
+		}
+	}
+	
+	public static void setLightsOn(int n) {
+		Room r = House.getInstance().getRooms().get(n);
+		ArrayList<Sensor<Object>> presence = r.getSensorByType(SensorType.PRESENCE);
+		ArrayList<Actuator<Object>> lights = r.getActuatorByType(ActuatorType.LIGHTCONTROL);
+		int hour = DeepHouseCalendar.getInstance().getCalendar().get(Calendar.HOUR_OF_DAY);
+		if(hour < 21 && hour > 8) {
+			for(int i = 0 ; i < presence.size() ; i++) {
+				//Somebody in the room => Lights on
+				if(((Boolean)(presence.get(i).getLastValue())).booleanValue()) {
+					for(int j = 0 ; j < lights.size() ; j++) {
+						lights.get(j).setLastValue(true);
+						lights.get(j).setModified(true);
+					}
+					long deltaTime = DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000 
+									- lastTimeLightsOn.get(n);
+					if(deltaTime < 300) {
+						delayBeforeLightsOff.set(n, (long) (delayBeforeLightsOff.get(n)*1.2));
+					}
+				}
+			}
+			for(int i = 0 ; i < lights.size() ; i++) {
+				//User wants to light the lights using the tablet
+				if(((Boolean)(lights.get(i).getUserValue())).booleanValue()) {
+					for(int j = 0 ; j < lights.size() ; j++) {
+						lights.get(j).setLastValue(true);
+						lights.get(j).setModified(true);
+					}
+					long deltaTime = DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000 
+									- lastTimeLightsOn.get(n);
+					if(deltaTime < 300) {
+						delayBeforeLightsOff.set(n, (long) (delayBeforeLightsOff.get(n)*1.2));
+					}
+				}
+			}	
 		}
 	}
 	
@@ -38,6 +81,7 @@ public abstract class LightAI {
 		Room r = House.getInstance().getRooms().get(n);
 		ArrayList<Sensor<Object>> presence = r.getSensorByType(SensorType.PRESENCE);
 		ArrayList<Actuator<Object>> lights = r.getActuatorByType(ActuatorType.LIGHTCONTROL);
+		ArrayList<Sensor<Object>> lightSensors = r.getSensorByType(SensorType.LIGHT);
 		boolean lightsOn = false;
 		for(int i = 0 ; i < lights.size() ; i++) {
 			if(((Boolean) lights.get(i).getLastValue()).booleanValue()) {
@@ -46,6 +90,7 @@ public abstract class LightAI {
 			}
 		}
 		for(Sensor<Object> p : presence) {
+			//Lights off because of delay
 			if(((Boolean)p.getLastValue()).booleanValue()) {
 				lastDetectedPresence.set(n,DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000);
 			}
@@ -56,6 +101,30 @@ public abstract class LightAI {
 					lights.get(i).setLastValue(false);
 					lights.get(i).setModified(true);
 				}
+				lastTimeLightsOn.set(n,DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000);
+				delayBeforeLightsOff.set(n, (long) (delayBeforeLightsOff.get(n)*0.8));
+				break;
+			}
+		}
+		for(int i = 0 ; i < lights.size() ; i++) {
+			//Lights off because user wants to using the tablet
+			if(!((Boolean)lights.get(i).getUserValue()).booleanValue()) {
+				for(int j = 0 ; j < lights.size() ; j++) {
+					lights.get(j).setLastValue(false);
+					lights.get(j).setModified(true);
+				}
+				lastTimeLightsOn.set(n,DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000);
+				break;
+			}
+		}
+		for(int i = 0 ; i < lightSensors.size() ; i++) {
+			//Lights off manually
+			if(!((Boolean)lightSensors.get(i).getLastValue()).booleanValue()) {
+				for(int j = 0 ; j < lights.size() ; j++) {
+					lights.get(j).setLastValue(false);
+					lights.get(j).setModified(true);
+				}
+				lastTimeLightsOn.set(n,DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000);
 				break;
 			}
 		}
