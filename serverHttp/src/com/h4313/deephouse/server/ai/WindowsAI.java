@@ -55,7 +55,9 @@ public abstract class WindowsAI {
 		ArrayList<Actuator<Object>> windowClosers = r.getActuatorByType(ActuatorType.WINDOWCLOSER);
 		Actuator<Object> heater = r.getActuatorByType(ActuatorType.RADIATOR).get(0);
 		for(Actuator<Object> w : windowClosers) {
-			if(((Boolean) w.getSensors().get(0).getLastValue()).booleanValue()) {
+			Sensor<Object> wsensor = w.getSensors().entrySet().iterator().next().getValue();
+			System.out.println("TEST : "+wsensor);
+			if(((Boolean) wsensor.getLastValue()).booleanValue()) {
 				heater.setLastValue(Constant.EMPTY_ROOM_TEMPERATURE);
 				heater.setModified(true);
 				openingTime.set(n,DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000);
