@@ -47,7 +47,7 @@ public class Controller extends Thread {
               }
             }
             TemperatureAI.initTemperatureAI();
-//            WindowsAI.initWindowsAI();
+            WindowsAI.initWindowsAI();
             LightAI.initLightAI();
             TemperatureHistory.initTemperatureHistory();
          }
