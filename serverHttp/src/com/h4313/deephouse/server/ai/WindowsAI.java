@@ -68,6 +68,10 @@ public abstract class WindowsAI {
 				heater.setModified(true);
 				openingTime.set(n,DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000);
 				opened.set(n, true);
+				for(int i = 0 ; i < windowClosers.size() ; i++) {
+					windowClosers.get(i).setLastValue(true);
+					windowClosers.get(i).setModified(true);
+				}
 				try {
 					heater.setUserValue(null);	
 				} catch(Exception e) {
