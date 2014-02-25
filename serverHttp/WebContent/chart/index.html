@@ -3,97 +3,12 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Evolution de la temperature des pieces de la maison</title>
-
-		<script type="text/javascript" src="Highcharts/js/jquery.min.js"></script>
 	</head>
 	<body>
-<script src="Highcharts/js/highcharts.js"></script>
-<script src="Highcharts/js/modules/data.js"></script>
-<script src="Highcharts/js/modules/exporting.js"></script>
 
-<!-- Additional files for the Highslide popup effect -->
-<script type="text/javascript" src="Highcharts/js/highslide-full.min.js"></script>
-<script type="text/javascript" src="Highcharts/js/highslide.config.js" charset="utf-8"></script>
-<link rel="stylesheet" type="text/css" href="Highcharts/css/highslide.css" />
-
-<div id="chart" style="with: 100%; height:100%;"></div>
-<script>
-$(document).ready(function()
-{
-
-	function refreshChart()
-	{
-		$.ajax({
-			url: "../rest/dailyTemperature",
-			type: "GET",
-			dataType: "json",
-			error: function(p1, p2, p3) {
-				console.log(p2);
-			},
-			success: function(data){
-				options.xAxis.categories = data.categories;
-				options.series[0].name = 'Salon';
-				options.series[0].data = data.r0;
-				options.series[1].name = 'Cuisine';
-				options.series[1].data = data.r1;
-				options.series[2].name = 'Salle de bain';
-				options.series[2].data = data.r2;
-				options.series[3].name = 'Chambre';
-				options.series[3].data = data.r3;
-				options.series[4].name = 'Bureau';
-				options.series[4].data = data.r4;
-				options.series[5].name = 'Couloir';
-				options.series[5].data = data.r5;
-				options.subtitle.text = data.date
-				var chart = new Highcharts.Chart(options);			
-			}
-		});
-	}
-	var options = {
-		chart: {
-			renderTo: 'chart',
-		},
-		credits: {
-			enabled: false
-		},
-		title: {
-			text: 'Evolution de la temperature des pieces de la maison',
-			x: -20
-		},
-		subtitle: {
-			text: '',
-			x: -20
-		},
-		xAxis: {
-			categories: [{}],
-			title: { text: 'Heures' }
-		},
-		yAxis: {
-			title: { text: 'Temperatures' }
-		},
-		tooltip: {
-            formatter: function() {
-                var s = '<b>A '+ this.x +'h il faisait :</b>';
-                
-                $.each(this.points, function(i, point) {
-                    s += '<br/>'+point.series.name+': '+(Math.round(point.y*100.0)/100.0)+' C';
-                });
-                
-                return s;
-            },
-            shared: true
-        },
-		series: [{},{},{},{},{},{}],
-		exporting: {
-		    enabled: false
-		}
-	};
-	
-	refreshChart();
-	setInterval(refreshChart, 5000);
-});
-
-</script>
+<a href="dailyTemperature.html">Aujourd'hui</a>
+<a href="weeklyTemperature.html">Cette semaine</a>
+<a href="yearlyTemperature.html">Cette ann&eaucte;e</a>
 
 	</body>
 </html>

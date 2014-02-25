@@ -33,6 +33,7 @@ import com.h4313.deephouse.sensor.Sensor;
 import com.h4313.deephouse.sensor.SensorType;
 import com.h4313.deephouse.server.ai.TemperatureHistory;
 import com.h4313.deephouse.server.controller.Controller;
+import com.h4313.deephouse.util.Date;
 import com.h4313.deephouse.util.DecToHexConverter;
 import com.h4313.deephouse.util.DeepHouseCalendar;
 
@@ -150,6 +151,39 @@ public class DeepHouseServicesImpl implements DeepHouseServices {
 		   
 		   JSONArray mJSONArray = null;
 		   for(Entry<Integer, ArrayList<Double>> entry : lastDay.entrySet()) {
+			    Integer roomId = entry.getKey();
+			    ArrayList<Double> temperatures = entry.getValue();
+			    
+			    mJSONArray = new JSONArray(temperatures);
+			    house.put("r" + roomId.toString(), mJSONArray);
+		   }
+			
+			return house.toString();
+			
+		} catch (Exception e) {
+			return getErrorJSONString(e);
+		}
+	}
+	
+	@GET
+	@Path("/weeklyTemperature")
+	@Produces("application/json")
+	@Override
+	public String weeklyTemperature() {
+		try
+		{	   
+			String currentDate = "Semaine " 
+					+ DeepHouseCalendar.getInstance().getCalendar().get(Calendar.WEEK_OF_MONTH) 
+					+ " de "
+					+ Date.getMonthFrFromCalendar(DeepHouseCalendar.getInstance().getCalendar());
+			
+		   HashMap<Integer, ArrayList<Double>> lastWeek = TemperatureHistory.getLastWeek();
+		   	
+		   JSONObject house = new JSONObject();
+		   house.put("date", currentDate);
+		   
+		   JSONArray mJSONArray = null;
+		   for(Entry<Integer, ArrayList<Double>> entry : lastWeek.entrySet()) {
 			    Integer roomId = entry.getKey();
 			    ArrayList<Double> temperatures = entry.getValue();
 			    

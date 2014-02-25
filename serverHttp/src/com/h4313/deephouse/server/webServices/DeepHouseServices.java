@@ -8,6 +8,8 @@ public interface DeepHouseServices {
 	
 	public String dailyTemperature();
 	
+	public String weeklyTemperature();
+	
 	public String addSensor(String piece, String idCapteur, String type);
 	
 	public String addActuator(String piece,  String idActionneur, String type);

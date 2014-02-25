@@ -13,32 +13,47 @@ import com.h4313.deephouse.util.DeepHouseCalendar;
 public abstract class TemperatureHistory
 {
 	private static HashMap<Integer, ArrayList<Double>> lastDay;
+	private static HashMap<Integer, ArrayList<Double>> lastWeek;
 	private static int previousHour = -1;
-//	private static int previousDay;
 	
 	public static void initTemperatureHistory() {
 		lastDay = new HashMap<Integer, ArrayList<Double>>();
+		lastWeek = new HashMap<Integer, ArrayList<Double>>();
 		for(Room room : House.getInstance().getRooms())
 		{
 			lastDay.put(room.getIdRoom(), new ArrayList<Double>());
+			lastWeek.put(room.getIdRoom(), new ArrayList<Double>());
 		}
 	}
 	
 	public static void run() {
 		Calendar cal = DeepHouseCalendar.getInstance().getCalendar();
 		int currentHour = cal.get(Calendar.HOUR_OF_DAY);
+		int currentDay = cal.get(Calendar.DAY_OF_WEEK);
 		
 		if(currentHour != previousHour)
 		{		
-			ArrayList<Double> temperatures = null;
+			ArrayList<Double> dailyTemperatures = null;
+			ArrayList<Double> weeklyTemperatures = null;
+			Double temperature = null;
 			for(Room room : House.getInstance().getRooms())
 			{
-				temperatures = lastDay.get(room.getIdRoom());
+				dailyTemperatures = lastDay.get(room.getIdRoom());
+				weeklyTemperatures = lastWeek.get(room.getIdRoom());
 				
 				if(currentHour == 0)
-					temperatures.clear();
+				{
+					dailyTemperatures.clear();
+					
+					if(currentDay == Calendar.MONDAY)
+					{
+						weeklyTemperatures.clear();
+					}
+				}
 				
-				temperatures.add((Double) room.getSensorByType(SensorType.TEMPERATURE).get(0).getLastValue());
+				temperature = (Double) room.getSensorByType(SensorType.TEMPERATURE).get(0).getLastValue();
+				dailyTemperatures.add(new Double(temperature.doubleValue()));
+				weeklyTemperatures.add(new Double(temperature.doubleValue()));
 			}
 			
 			previousHour = currentHour;
@@ -48,5 +63,10 @@ public abstract class TemperatureHistory
 	public static HashMap<Integer, ArrayList<Double>> getLastDay()
 	{
 		return lastDay;
+	}
+	
+	public static HashMap<Integer, ArrayList<Double>> getLastWeek()
+	{
+		return lastWeek;
 	}
 }
