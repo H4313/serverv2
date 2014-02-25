@@ -255,6 +255,22 @@ public class DeepHouseServicesImpl implements DeepHouseServices {
 
 		return json;
 	}
+	
+	@GET
+	@Path("/date")
+	@Override
+	public String getDate() {
+
+		try {
+			JSONObject json = new JSONObject();
+			json.put("success", true);
+			json.put("date", DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis());
+			
+			return json.toString();
+		} catch (Exception e) {
+			return getErrorJSONString(e);
+		}
+	}
 
 	@Override
 	@POST
