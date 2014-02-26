@@ -98,7 +98,7 @@ public abstract class LightAI {
 							- lastDetectedPresence.get(n);
 			if(deltaTime > delayBeforeLightsOff.get(n) && lightsOn) {
 				for(int i = 0 ; i < lights.size() ; i++) {
-					lights.get(i).setLastValue(false);
+					lights.get(i).setLastValue(true);
 					lights.get(i).setModified(true);
 				}
 				lastTimeLightsOn.set(n,DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000);
@@ -110,7 +110,7 @@ public abstract class LightAI {
 			//Lights off because user wants to using the tablet
 			if(!((Boolean)lights.get(i).getUserValue()).booleanValue()) {
 				for(int j = 0 ; j < lights.size() ; j++) {
-					lights.get(j).setLastValue(false);
+					lights.get(j).setLastValue(true);
 					lights.get(j).setModified(true);
 				}
 				lastTimeLightsOn.set(n,DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000);
@@ -121,7 +121,7 @@ public abstract class LightAI {
 			//Lights off manually
 			if(!((Boolean)lightSensors.get(i).getLastValue()).booleanValue()) {
 				for(int j = 0 ; j < lights.size() ; j++) {
-					lights.get(j).setLastValue(false);
+					lights.get(j).setLastValue(true);
 					lights.get(j).setModified(true);
 				}
 				lastTimeLightsOn.set(n,DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000);

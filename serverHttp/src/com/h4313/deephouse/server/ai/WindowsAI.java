@@ -91,7 +91,7 @@ public abstract class WindowsAI {
 			if(!(((Boolean)w.getUserValue()).booleanValue())) {
 				//Closed by tablet
 				for(int i = 0 ; i < windowClosers.size() ; i++) {
-					windowClosers.get(i).setLastValue(false);
+					windowClosers.get(i).setLastValue(true);
 					windowClosers.get(i).setModified(true);
 				}
 				closedTime.set(n,DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000);
@@ -100,7 +100,7 @@ public abstract class WindowsAI {
 			else if(!(((Boolean)wsensor.getLastValue()).booleanValue())) {
 				//Closed by hand
 				for(int i = 0 ; i < windowClosers.size() ; i++) {
-					windowClosers.get(i).setLastValue(false);
+					windowClosers.get(i).setLastValue(true);
 					windowClosers.get(i).setModified(true);
 				}
 				closedTime.set(n,DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000);
@@ -109,7 +109,7 @@ public abstract class WindowsAI {
 			else if(deltaTime > openedDuration.get(n)) {
 				//Closed by delay
 				for(int i = 0 ; i < windowClosers.size() ; i++) {
-					windowClosers.get(i).setLastValue(false);
+					windowClosers.get(i).setLastValue(true);
 					windowClosers.get(i).setModified(true);
 				}
 				closedTime.set(n,DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000);
