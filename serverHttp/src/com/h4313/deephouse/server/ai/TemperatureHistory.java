@@ -7,7 +7,6 @@ import java.util.HashMap;
 import com.h4313.deephouse.housemodel.House;
 import com.h4313.deephouse.housemodel.Room;
 import com.h4313.deephouse.sensor.SensorType;
-import com.h4313.deephouse.server.util.Constant;
 import com.h4313.deephouse.util.DeepHouseCalendar;
 
 public abstract class TemperatureHistory
@@ -32,7 +31,8 @@ public abstract class TemperatureHistory
 		int currentDay = cal.get(Calendar.DAY_OF_WEEK);
 		
 		if(currentHour != previousHour)
-		{		
+		{	
+//			System.out.println("currentHour = " + currentHour + ", previousHour = " + previousHour);
 			ArrayList<Double> dailyTemperatures = null;
 			ArrayList<Double> weeklyTemperatures = null;
 			Double temperature = null;
@@ -52,8 +52,9 @@ public abstract class TemperatureHistory
 				}
 				
 				temperature = (Double) room.getSensorByType(SensorType.TEMPERATURE).get(0).getLastValue();
-				dailyTemperatures.add(new Double(temperature.doubleValue()));
-				weeklyTemperatures.add(new Double(temperature.doubleValue()));
+//				System.out.println("room = " + room.getName() + ", temperature = " + temperature.doubleValue());
+				dailyTemperatures.add(temperature);
+				weeklyTemperatures.add(temperature);
 			}
 			
 			previousHour = currentHour;

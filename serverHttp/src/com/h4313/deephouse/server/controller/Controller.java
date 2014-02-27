@@ -37,6 +37,10 @@ public class Controller extends Thread {
 	private Controller() {
 		super();
         this.alive = true;
+        TemperatureAI.initTemperatureAI();
+        WindowsAI.initWindowsAI();
+        LightAI.initLightAI();
+        TemperatureHistory.initTemperatureHistory();
 	}
 	
 	public static final Controller getInstance() {		    
@@ -46,10 +50,6 @@ public class Controller extends Thread {
              	 Controller.instance = new Controller();
               }
             }
-            TemperatureAI.initTemperatureAI();
-            WindowsAI.initWindowsAI();
-            LightAI.initLightAI();
-            TemperatureHistory.initTemperatureHistory();
          }
          return Controller.instance;
 	}

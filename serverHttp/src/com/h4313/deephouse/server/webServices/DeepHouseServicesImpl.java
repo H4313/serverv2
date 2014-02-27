@@ -85,7 +85,7 @@ public class DeepHouseServicesImpl implements DeepHouseServices {
 //				room.addActuator(DecToHexConverter.decToHex(id++),
 //						ActuatorType.FLAPCLOSER);
 
-				room.establishConnections();
+//				room.establishConnections();
 			}
 			System.out.println("Done init");
 			h.printInformations();
