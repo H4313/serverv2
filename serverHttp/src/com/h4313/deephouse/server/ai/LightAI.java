@@ -44,11 +44,13 @@ public abstract class LightAI {
 		Room r = House.getInstance().getRooms().get(n);
 		ArrayList<Sensor<Object>> presence = r.getSensorByType(SensorType.PRESENCE);
 		ArrayList<Actuator<Object>> lights = r.getActuatorByType(ActuatorType.LIGHTCONTROL);
+		Sensor<Object> lightSensor = r.getSensorByType(SensorType.LIGHT).get(0);
 		int hour = DeepHouseCalendar.getInstance().getCalendar().get(Calendar.HOUR_OF_DAY);
 		if(hour < 21 && hour > 8) {
 			for(int i = 0 ; i < presence.size() ; i++) {
 				//Somebody in the room => Lights on
-				if(((Boolean)(presence.get(i).getLastValue())).booleanValue()) {
+				if(((Boolean)(presence.get(i).getLastValue())).booleanValue()
+					&& (((Boolean)(lightSensor.getLastValue())).booleanValue())) {
 					for(int j = 0 ; j < lights.size() ; j++) {
 						lights.get(j).setLastValue(true);
 						lights.get(j).setModified(true);
@@ -62,7 +64,8 @@ public abstract class LightAI {
 			}
 			for(int i = 0 ; i < lights.size() ; i++) {
 				//User wants to light the lights using the tablet
-				if(((Boolean)(lights.get(i).getUserValue())).booleanValue()) {
+				if(((Boolean)(lights.get(i).getUserValue())).booleanValue()
+					&& (((Boolean)(lightSensor.getLastValue())).booleanValue())) {
 					for(int j = 0 ; j < lights.size() ; j++) {
 						lights.get(j).setLastValue(true);
 						lights.get(j).setModified(true);
@@ -83,8 +86,8 @@ public abstract class LightAI {
 		ArrayList<Actuator<Object>> lights = r.getActuatorByType(ActuatorType.LIGHTCONTROL);
 		ArrayList<Sensor<Object>> lightSensors = r.getSensorByType(SensorType.LIGHT);
 		boolean lightsOn = false;
-		for(int i = 0 ; i < lights.size() ; i++) {
-			if(((Boolean) lights.get(i).getLastValue()).booleanValue()) {
+		for(int i = 0 ; i < lightSensors.size() ; i++) {
+			if(((Boolean) lightSensors.get(i).getLastValue()).booleanValue()) {
 				lightsOn = true;
 				break;
 			}
@@ -108,7 +111,7 @@ public abstract class LightAI {
 		}
 		for(int i = 0 ; i < lights.size() ; i++) {
 			//Lights off because user wants to using the tablet
-			if(!((Boolean)lights.get(i).getUserValue()).booleanValue()) {
+			if(!((Boolean)lights.get(i).getUserValue()).booleanValue() && lightsOn) {
 				for(int j = 0 ; j < lights.size() ; j++) {
 					lights.get(j).setLastValue(true);
 					lights.get(j).setModified(true);
@@ -119,14 +122,8 @@ public abstract class LightAI {
 		}
 		for(int i = 0 ; i < lightSensors.size() ; i++) {
 			//Lights off manually
-			if(!((Boolean)lightSensors.get(i).getLastValue()).booleanValue()) {
-				for(int j = 0 ; j < lights.size() ; j++) {
-					lights.get(j).setLastValue(true);
-					lights.get(j).setModified(true);
-				}
-				lastTimeLightsOn.set(n,DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000);
-				break;
-			}
+			lastTimeLightsOn.set(n,DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000);
+			break;
 		}
 	}
 	
