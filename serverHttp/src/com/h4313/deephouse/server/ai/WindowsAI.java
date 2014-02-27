@@ -88,17 +88,13 @@ public abstract class WindowsAI {
 		long deltaTime = DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000 - openingTime.get(n);
 		for(Actuator<Object> w : windowClosers) {
 			Sensor<Object> wsensor = w.getSensors().entrySet().iterator().next().getValue();
-			if(!(((Boolean)w.getUserValue()).booleanValue())) {
-				//Closed by tablet
-				for(int i = 0 ; i < windowClosers.size() ; i++) {
-					windowClosers.get(i).setLastValue(true);
-					windowClosers.get(i).setModified(true);
-				}
+			if(!(((Boolean)wsensor.getLastValue()).booleanValue())) {
+				//Closed by hand
 				closedTime.set(n,DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000);
 				opened.set(n, false);
 			}
-			else if(!(((Boolean)wsensor.getLastValue()).booleanValue())) {
-				//Closed by hand
+			else if(!(((Boolean)w.getUserValue()).booleanValue())) {
+				//Closed by tablet
 				for(int i = 0 ; i < windowClosers.size() ; i++) {
 					windowClosers.get(i).setLastValue(true);
 					windowClosers.get(i).setModified(true);
