@@ -21,11 +21,14 @@ public abstract class WindowsAI {
 	
 	private static ArrayList<Boolean> opened;
 	
+	private static ArrayList<Boolean> previousOrder;
+	
 	public static void initWindowsAI() {
 		openingTime = new ArrayList<Long>();
 		closedTime = new ArrayList<Long>();
 		openedDuration = new ArrayList<Long>();
 		opened = new ArrayList<Boolean>();
+		previousOrder = new ArrayList<Boolean>();
 		int nRooms = House.getInstance().getRooms().size();
 		long initTime = DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000;
 		for(int i = 0 ; i < nRooms ; i++) {
@@ -33,6 +36,7 @@ public abstract class WindowsAI {
 			openedDuration.add(Constant.OPENED_DURATION_INIT);
 			closedTime.add(initTime);
 			opened.add(false);
+			previousOrder.add(null);
 		}
 	}
 	
@@ -63,7 +67,8 @@ public abstract class WindowsAI {
 				opened.set(n, true);
 				break;
 			}
-			else if(((Boolean)w.getUserValue()).booleanValue() && (w.getUserValue() != null)) {
+			else if(((Boolean)w.getUserValue()).booleanValue()
+					&& (((Boolean)w.getUserValue()).booleanValue() != (Boolean)previousOrder.get(n).booleanValue())) {
 				heater.setLastValue(Constant.EMPTY_ROOM_TEMPERATURE);
 				heater.setModified(true);
 				openingTime.set(n,DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000);
@@ -71,11 +76,6 @@ public abstract class WindowsAI {
 				for(int i = 0 ; i < windowClosers.size() ; i++) {
 					windowClosers.get(i).setLastValue(true);
 					windowClosers.get(i).setModified(true);
-				}
-				try {
-					w.setUserValue(null);	
-				} catch(Exception e) {
-					e.printStackTrace();
 				}
 				break;
 			}
@@ -93,7 +93,8 @@ public abstract class WindowsAI {
 				closedTime.set(n,DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000);
 				opened.set(n, false);
 			}
-			else if(!(((Boolean)w.getUserValue()).booleanValue())&& (w.getUserValue() != null)) {
+			else if(!(((Boolean)w.getUserValue()).booleanValue())
+					&& (((Boolean)w.getUserValue()).booleanValue() != (Boolean)previousOrder.get(n).booleanValue())) {
 				//Closed by tablet
 				for(int i = 0 ; i < windowClosers.size() ; i++) {
 					windowClosers.get(i).setLastValue(true);
