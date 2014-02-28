@@ -63,7 +63,7 @@ public abstract class WindowsAI {
 				opened.set(n, true);
 				break;
 			}
-			else if(((Boolean)w.getUserValue()).booleanValue()) {
+			else if(((Boolean)w.getUserValue()).booleanValue() && (w.getUserValue() != null)) {
 				heater.setLastValue(Constant.EMPTY_ROOM_TEMPERATURE);
 				heater.setModified(true);
 				openingTime.set(n,DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000);
@@ -72,11 +72,11 @@ public abstract class WindowsAI {
 					windowClosers.get(i).setLastValue(true);
 					windowClosers.get(i).setModified(true);
 				}
-//				try {
-//					heater.setUserValue(null);	
-//				} catch(Exception e) {
-//					e.printStackTrace();
-//				}
+				try {
+					w.setUserValue(null);	
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
 				break;
 			}
 		}
@@ -93,7 +93,7 @@ public abstract class WindowsAI {
 				closedTime.set(n,DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000);
 				opened.set(n, false);
 			}
-			else if(!(((Boolean)w.getUserValue()).booleanValue())) {
+			else if(!(((Boolean)w.getUserValue()).booleanValue())&& (w.getUserValue() != null)) {
 				//Closed by tablet
 				for(int i = 0 ; i < windowClosers.size() ; i++) {
 					windowClosers.get(i).setLastValue(true);
