@@ -122,8 +122,10 @@ public abstract class LightAI {
 		}
 		for(int i = 0 ; i < lightSensors.size() ; i++) {
 			//Lights off manually
-			lastTimeLightsOn.set(n,DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000);
-			break;
+			if(!((Boolean)lightSensors.get(i).getLastValue()).booleanValue() && lightsOn) {
+				lastTimeLightsOn.set(n,DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000);
+				break;	
+			}
 		}
 	}
 	
