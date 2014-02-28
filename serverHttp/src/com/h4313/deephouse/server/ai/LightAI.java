@@ -66,25 +66,25 @@ public abstract class LightAI {
 					}
 				}
 			}
-			for(int i = 0 ; i < lights.size() ; i++) {
-				//User wants to light the lights using the tablet
-				if(((Boolean)(lights.get(i).getUserValue())).booleanValue()
-					&& (!((Boolean)(lightSensor.getLastValue())).booleanValue())
-					&& (!previousOrder.get(n).equals(1))) {
-					
-					previousOrder.set(n,1);
-					for(int j = 0 ; j < lights.size() ; j++) {
-						lights.get(j).setLastValue(true);
-						lights.get(j).setModified(true);
-					}
-					long deltaTime = DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000 
-									- lastTimeLightsOn.get(n);
-					if(deltaTime < 300) {
-						delayBeforeLightsOff.set(n, (long) (delayBeforeLightsOff.get(n)*1.2));
-					}
-				}
-			}	
 		}
+		for(int i = 0 ; i < lights.size() ; i++) {
+			//User wants to light the lights using the tablet
+			if(((Boolean)(lights.get(i).getUserValue())).booleanValue()
+				&& (!((Boolean)(lightSensor.getLastValue())).booleanValue())
+				&& (!previousOrder.get(n).equals(1))) {
+				
+				previousOrder.set(n,1);
+				for(int j = 0 ; j < lights.size() ; j++) {
+					lights.get(j).setLastValue(true);
+					lights.get(j).setModified(true);
+				}
+				long deltaTime = DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000 
+								- lastTimeLightsOn.get(n);
+				if(deltaTime < 300) {
+					delayBeforeLightsOff.set(n, (long) (delayBeforeLightsOff.get(n)*1.2));
+				}
+			}
+		}	
 	}
 	
 	public static void setLightsOff(int n) {
