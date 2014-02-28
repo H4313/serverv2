@@ -20,16 +20,20 @@ public abstract class LightAI {
 	
 	private static ArrayList<Long> lastTimeLightsOn;
 	
+	private static ArrayList<Integer> previousOrder;
+	
 	public static void initLightAI() {
 		lastDetectedPresence = new ArrayList<Long>();
 		delayBeforeLightsOff = new ArrayList<Long>();
 		lastTimeLightsOn = new ArrayList<Long>();
+		previousOrder = new ArrayList<Integer>();
 		int nRooms = House.getInstance().getRooms().size();
 		long initTime = DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000;
 		for(int i = 0 ; i < nRooms ; i++) {
 			lastDetectedPresence.add(initTime);
 			delayBeforeLightsOff.add(Constant.DELAY_BEFORE_LIGHTS_OFF_INIT);
 			lastTimeLightsOn.add(initTime);
+			previousOrder.add(0);
 		}
 	}
 	
@@ -50,7 +54,7 @@ public abstract class LightAI {
 			for(int i = 0 ; i < presence.size() ; i++) {
 				//Somebody in the room => Lights on
 				if(((Boolean)(presence.get(i).getLastValue())).booleanValue()
-					&& (((Boolean)(lightSensor.getLastValue())).booleanValue())) {
+					&& (!((Boolean)(lightSensor.getLastValue())).booleanValue())) {
 					for(int j = 0 ; j < lights.size() ; j++) {
 						lights.get(j).setLastValue(true);
 						lights.get(j).setModified(true);
@@ -65,7 +69,10 @@ public abstract class LightAI {
 			for(int i = 0 ; i < lights.size() ; i++) {
 				//User wants to light the lights using the tablet
 				if(((Boolean)(lights.get(i).getUserValue())).booleanValue()
-					&& (((Boolean)(lightSensor.getLastValue())).booleanValue())) {
+					&& (!((Boolean)(lightSensor.getLastValue())).booleanValue())
+					&& (!previousOrder.get(n).equals(1))) {
+					
+					previousOrder.set(n,1);
 					for(int j = 0 ; j < lights.size() ; j++) {
 						lights.get(j).setLastValue(true);
 						lights.get(j).setModified(true);
@@ -111,7 +118,8 @@ public abstract class LightAI {
 		}
 		for(int i = 0 ; i < lights.size() ; i++) {
 			//Lights off because user wants to using the tablet
-			if(!((Boolean)lights.get(i).getUserValue()).booleanValue() && lightsOn) {
+			if(!((Boolean)lights.get(i).getUserValue()).booleanValue() && lightsOn && !previousOrder.get(n).equals(2)) {
+				previousOrder.set(n,2);
 				for(int j = 0 ; j < lights.size() ; j++) {
 					lights.get(j).setLastValue(true);
 					lights.get(j).setModified(true);
