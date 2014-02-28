@@ -21,14 +21,14 @@ public abstract class WindowsAI {
 	
 	private static ArrayList<Boolean> opened;
 	
-	private static ArrayList<Boolean> previousOrder;
+	private static ArrayList<Integer> previousOrder;
 	
 	public static void initWindowsAI() {
 		openingTime = new ArrayList<Long>();
 		closedTime = new ArrayList<Long>();
 		openedDuration = new ArrayList<Long>();
 		opened = new ArrayList<Boolean>();
-		previousOrder = new ArrayList<Boolean>();
+		previousOrder = new ArrayList<Integer>();
 		int nRooms = House.getInstance().getRooms().size();
 		long initTime = DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000;
 		for(int i = 0 ; i < nRooms ; i++) {
@@ -36,7 +36,7 @@ public abstract class WindowsAI {
 			openedDuration.add(Constant.OPENED_DURATION_INIT);
 			closedTime.add(initTime);
 			opened.add(false);
-			previousOrder.add(null);
+			previousOrder.add(0);
 		}
 	}
 	
@@ -68,7 +68,8 @@ public abstract class WindowsAI {
 				break;
 			}
 			else if(((Boolean)w.getUserValue()).booleanValue()
-					&& (((Boolean)w.getUserValue()).booleanValue() != (Boolean)previousOrder.get(n).booleanValue())) {
+					&& !previousOrder.get(n).equals(1)) {
+				previousOrder.set(n, 1);
 				heater.setLastValue(Constant.EMPTY_ROOM_TEMPERATURE);
 				heater.setModified(true);
 				openingTime.set(n,DeepHouseCalendar.getInstance().getCalendar().getTimeInMillis()/1000);
@@ -94,7 +95,8 @@ public abstract class WindowsAI {
 				opened.set(n, false);
 			}
 			else if(!(((Boolean)w.getUserValue()).booleanValue())
-					&& (((Boolean)w.getUserValue()).booleanValue() != (Boolean)previousOrder.get(n).booleanValue())) {
+					&& !previousOrder.get(n).equals(2)) {
+				previousOrder.set(n, 2);
 				//Closed by tablet
 				for(int i = 0 ; i < windowClosers.size() ; i++) {
 					windowClosers.get(i).setLastValue(true);
