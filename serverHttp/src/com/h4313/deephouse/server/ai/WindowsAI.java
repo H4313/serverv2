@@ -72,11 +72,11 @@ public abstract class WindowsAI {
 					windowClosers.get(i).setLastValue(true);
 					windowClosers.get(i).setModified(true);
 				}
-				try {
-					heater.setUserValue(null);	
-				} catch(Exception e) {
-					e.printStackTrace();
-				}
+//				try {
+//					heater.setUserValue(null);	
+//				} catch(Exception e) {
+//					e.printStackTrace();
+//				}
 				break;
 			}
 		}
